@@ -1,0 +1,33 @@
+﻿# Python & Environments
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.pt
+*.onnx
+*.engine
+.env
+backend/.env
+
+# Node & Frontend
+node_modules/
+frontend/node_modules/
+frontend/dist/
+frontend/.env
+*.local
+
+# Media & Uploads
+backend/uploads/snapshots/*
+!backend/uploads/snapshots/.gitkeep
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# MediaMTX binaries
+streaming/mediamtx
+streaming/mediamtx.exe
+streaming/*.log

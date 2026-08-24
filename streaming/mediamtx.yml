@@ -1,0 +1,35 @@
+﻿# MediaMTX Configuration for Sentinel CCTV Ingestion Gateway
+# Zero-cost, self-hosted streaming server for RTSP, WebRTC, HLS and RTMP
+
+logLevel: info
+logDestinations: [stdout]
+
+# RTSP Server Settings (Camera Ingestion)
+rtsp: yes
+rtspAddress: :8554
+protocols: [tcp, udp]
+
+# WebRTC Server Settings (Zero-Latency Browser Video Playback)
+webrtc: yes
+webrtcAddress: :8889
+webrtcEncryption: no
+webrtcAllowOrigins: ["*"]
+
+# HLS Server Settings (Adaptive Bitrate Web Stream)
+hls: yes
+hlsAddress: :8888
+hlsAlwaysRemux: no
+hlsVariant: lowLatency
+
+# API & Metrics
+api: yes
+apiAddress: :9997
+
+# Path Rules: Auto-ingest any incoming RTSP stream or camera proxy
+paths:
+  all_others:
+    # Allows dynamic stream publication from any camera brand
+    readUser: ""
+    readPass: ""
+    publishUser: ""
+    publishPass: ""
