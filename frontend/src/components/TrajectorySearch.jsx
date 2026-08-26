@@ -1,5 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { Search, MapPin, Clock, Gauge, ShieldAlert, History, Navigation } from 'lucide-react';
+import { Search, MapPin, Clock, Gauge, ShieldAlert, History, Navigation, Image as ImageIcon } from 'lucide-react';
 import { fetchVehicleTrajectory } from '../services/api';
 import GISMap from './GISMap';
 
@@ -25,9 +25,9 @@ export default function TrajectorySearch({ initialPlate = '', cameras = [] }) {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gap: '20px', height: 'calc(100vh - 160px)' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: '400px 1fr', gap: '20px', height: 'calc(100vh - 160px)' }}>
       
-      {/* Left Column: Search Form & Timeline */}
+      {/* Left Column: Search Form & Timeline with Image Snapshots */}
       <div className="glass-card" style={{ padding: '20px', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
@@ -143,22 +143,22 @@ export default function TrajectorySearch({ initialPlate = '', cameras = [] }) {
             <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '10px', fontSize: '11px', color: '#9ca3af' }}>
               <span>Checkpoints: <strong>{trajectoryData.total_detections}</strong></span>
               {trajectoryData.waypoints.length > 0 && (
-                <span>Duration: <strong>{new Date(trajectoryData.last_seen).toLocaleDateString('en-IN')}</strong></span>
+                <span>Last Seen: <strong>{new Date(trajectoryData.last_seen).toLocaleTimeString('en-IN')}</strong></span>
               )}
             </div>
           </div>
         )}
 
-        {/* Waypoints Timeline */}
-        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px', paddingRight: '4px' }}>
+        {/* Waypoints Timeline with Photos */}
+        <div style={{ flex: 1, overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', paddingRight: '4px' }}>
           <h3 style={{ fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)', textTransform: 'uppercase' }}>
-            Chronological Trajectory Logs
+            Checkpoint Evidence Timeline
           </h3>
 
           {!trajectoryData || trajectoryData.waypoints.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '30px 10px', color: 'var(--text-muted)' }}>
               <History size={32} style={{ opacity: 0.3, marginBottom: '8px' }} />
-              <p style={{ fontSize: '12px' }}>Enter a vehicle number above to reconstruct its movement path across Gujarat Police CCTV network.</p>
+              <p style={{ fontSize: '12px' }}>Enter a vehicle number above to reconstruct its movement path and view captured camera photo evidence.</p>
             </div>
           ) : (
             trajectoryData.waypoints.map((wp, idx) => (
@@ -168,7 +168,7 @@ export default function TrajectorySearch({ initialPlate = '', cameras = [] }) {
                   background: '#111827',
                   border: '1px solid #1f2937',
                   borderRadius: '8px',
-                  padding: '10px 12px',
+                  padding: '12px',
                   position: 'relative',
                   borderLeft: `4px solid ${idx === trajectoryData.waypoints.length - 1 ? '#ef4444' : '#3b82f6'}`
                 }}
@@ -181,13 +181,28 @@ export default function TrajectorySearch({ initialPlate = '', cameras = [] }) {
                     {new Date(wp.detected_at).toLocaleTimeString('en-IN')}
                   </span>
                 </div>
+                
                 <div style={{ fontSize: '11px', color: '#64748b', marginTop: '2px' }}>
                   📍 {wp.location_name}
                 </div>
+
+                {/* Speed indicator */}
                 {wp.estimated_speed_kmh && (
                   <div style={{ display: 'flex', alignItems: 'center', gap: '4px', marginTop: '4px', fontSize: '11px', color: '#f59e0b', fontWeight: '600' }}>
                     <Gauge size={12} />
                     <span>Est. Speed: {wp.estimated_speed_kmh} km/h</span>
+                  </div>
+                )}
+
+                {/* Evidence Snapshot Photo */}
+                {wp.snapshot_url && (
+                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #374151' }}>
+                    <img
+                      src={`http://localhost:8000${wp.snapshot_url}`}
+                      alt="CCTV Evidence Crop"
+                      style={{ width: '100%', height: '90px', objectFit: 'cover', display: 'block' }}
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
                   </div>
                 )}
               </div>

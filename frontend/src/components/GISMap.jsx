@@ -2,7 +2,6 @@
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Camera, AlertCircle, Navigation } from 'lucide-react';
 
 // Fix leaflet default icon issue
 delete L.Icon.Default.prototype._getIconUrl;
@@ -12,7 +11,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
 });
 
-// Custom Camera Marker Icons
 const createCustomIcon = (isAlert) => {
   return L.divIcon({
     className: 'custom-map-pin',
@@ -49,23 +47,23 @@ const createWaypointIcon = (index, total) => {
     html: `
       <div style="
         background: ${color};
-        width: 26px;
-        height: 26px;
+        width: 28px;
+        height: 28px;
         border-radius: 50%;
         border: 2px solid #fff;
         display: flex;
         align-items: center;
         justify-content: center;
         color: white;
-        font-size: 11px;
+        font-size: 12px;
         font-weight: 800;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.6);
       ">
         ${index + 1}
       </div>
     `,
-    iconSize: [26, 26],
-    iconAnchor: [13, 13],
+    iconSize: [28, 28],
+    iconAnchor: [14, 14],
   });
 };
 
@@ -80,7 +78,6 @@ function ChangeView({ center, zoom }) {
 }
 
 export default function GISMap({ cameras = [], activeRoute = null, selectedCamera = null, onSelectCamera }) {
-  // Default map center: Ahmedabad & Gandhinagar Region
   const defaultCenter = [23.05, 72.56];
   const [center, setCenter] = useState(defaultCenter);
   const [zoom, setZoom] = useState(12);
@@ -110,42 +107,36 @@ export default function GISMap({ cameras = [], activeRoute = null, selectedCamer
       >
         <ChangeView center={center} zoom={zoom} />
         
-        {/* Dark Matter CartoDB Open-Source Tiles */}
         <TileLayer
           url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           maxZoom={19}
         />
 
-        {/* Render CCTV Camera Markers */}
-        {cameras.map((cam) => {
-          const isAlert = cam.hasAlert || false;
-          return (
-            <Marker
-              key={cam.id}
-              position={[cam.latitude, cam.longitude]}
-              icon={createCustomIcon(isAlert)}
-              eventHandlers={{
-                click: () => onSelectCamera && onSelectCamera(cam),
-              }}
-            >
-              <Popup>
-                <div style={{ padding: '6px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '4px' }}>
-                    <span style={{ fontSize: '13px', fontWeight: '700', color: '#60a5fa' }}>{cam.name}</span>
-                  </div>
-                  <p style={{ fontSize: '11px', color: '#9ca3af', margin: '2px 0' }}>📍 {cam.location_name}</p>
-                  <p style={{ fontSize: '11px', color: '#d1d5db', margin: '2px 0' }}>🏢 {cam.department}</p>
-                  <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '10px', color: '#10b981', fontWeight: '600' }}>● {cam.status}</span>
-                    <span style={{ fontSize: '10px', color: '#6b7280' }}>{cam.fps_processing} FPS</span>
-                  </div>
+        {/* Cameras */}
+        {cameras.map((cam) => (
+          <Marker
+            key={cam.id}
+            position={[cam.latitude, cam.longitude]}
+            icon={createCustomIcon(cam.hasAlert)}
+            eventHandlers={{ click: () => onSelectCamera && onSelectCamera(cam) }}
+          >
+            <Popup>
+              <div style={{ padding: '6px', minWidth: '180px' }}>
+                <div style={{ fontSize: '13px', fontWeight: '700', color: '#60a5fa', marginBottom: '4px' }}>
+                  📹 {cam.name}
                 </div>
-              </Popup>
-            </Marker>
-          );
-        })}
+                <p style={{ fontSize: '11px', color: '#9ca3af', margin: '2px 0' }}>📍 {cam.location_name}</p>
+                <p style={{ fontSize: '11px', color: '#d1d5db', margin: '2px 0' }}>🏢 {cam.department}</p>
+                <div style={{ marginTop: '8px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ fontSize: '10px', color: '#10b981', fontWeight: '600' }}>● {cam.status}</span>
+                  <span style={{ fontSize: '10px', color: '#9ca3af' }}>{cam.fps_processing} FPS</span>
+                </div>
+              </div>
+            </Popup>
+          </Marker>
+        ))}
 
-        {/* Render Historical Trajectory Polyline */}
+        {/* Trajectory Polyline */}
         {polylineCoords.length > 1 && (
           <Polyline
             positions={polylineCoords}
@@ -158,7 +149,7 @@ export default function GISMap({ cameras = [], activeRoute = null, selectedCamer
           />
         )}
 
-        {/* Render Trajectory Waypoint Pins */}
+        {/* Checkpoint Pins with Evidentiary Image Popups */}
         {activeRoute?.waypoints?.map((wp, idx) => (
           <Marker
             key={`wp-${idx}`}
@@ -166,60 +157,38 @@ export default function GISMap({ cameras = [], activeRoute = null, selectedCamer
             icon={createWaypointIcon(idx, activeRoute.waypoints.length)}
           >
             <Popup>
-              <div style={{ padding: '6px' }}>
+              <div style={{ padding: '6px', minWidth: '220px' }}>
                 <span className="plate-badge" style={{ marginBottom: '6px' }}>
                   {activeRoute.plate_number}
                 </span>
-                <p style={{ fontSize: '11px', color: '#93c5fd', fontWeight: '600' }}>
+                <p style={{ fontSize: '12px', color: '#93c5fd', fontWeight: '700' }}>
                   Checkpoint #{idx + 1}: {wp.camera_name}
                 </p>
-                <p style={{ fontSize: '10px', color: '#9ca3af' }}>
+                <p style={{ fontSize: '11px', color: '#9ca3af', marginTop: '2px' }}>
                   ⏱️ {new Date(wp.detected_at).toLocaleTimeString('en-IN')}
                 </p>
                 {wp.estimated_speed_kmh && (
-                  <p style={{ fontSize: '10px', color: '#f59e0b', fontWeight: '700' }}>
-                    ⚡ Speed: ~{wp.estimated_speed_kmh} km/h
+                  <p style={{ fontSize: '11px', color: '#f59e0b', fontWeight: '700', marginTop: '2px' }}>
+                    ⚡ Est. Speed: ~{wp.estimated_speed_kmh} km/h
                   </p>
+                )}
+
+                {/* Evidence Snapshot Photo */}
+                {wp.snapshot_url && (
+                  <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #374151' }}>
+                    <img
+                      src={`http://localhost:8000${wp.snapshot_url}`}
+                      alt="Plate Snapshot"
+                      style={{ width: '100%', height: '100px', objectFit: 'cover', display: 'block' }}
+                      onError={(e) => { e.target.style.display = 'none'; }}
+                    />
+                  </div>
                 )}
               </div>
             </Popup>
           </Marker>
         ))}
       </MapContainer>
-
-      {/* Map Legend Overlay */}
-      <div
-        style={{
-          position: 'absolute',
-          bottom: '16px',
-          left: '16px',
-          zIndex: 1000,
-          background: 'rgba(17, 24, 39, 0.85)',
-          backdropFilter: 'blur(8px)',
-          padding: '8px 14px',
-          borderRadius: '8px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
-          display: 'flex',
-          gap: '14px',
-          fontSize: '11px',
-          color: '#d1d5db',
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: '10px', height: '10px', background: '#3b82f6', borderRadius: '50%', display: 'inline-block' }} />
-          Active Camera
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-          <span style={{ width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%', display: 'inline-block' }} />
-          Suspect Spotted
-        </div>
-        {activeRoute && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '16px', height: '2px', background: '#ef4444', display: 'inline-block' }} />
-            Vehicle Trajectory
-          </div>
-        )}
-      </div>
     </div>
   );
 }
