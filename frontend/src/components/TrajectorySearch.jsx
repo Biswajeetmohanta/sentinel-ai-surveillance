@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+import React, { useState } from 'react';
 import { Search, MapPin, Clock, Gauge, ShieldAlert, History, Navigation, Image as ImageIcon } from 'lucide-react';
 import { fetchVehicleTrajectory } from '../services/api';
 import GISMap from './GISMap';
@@ -198,7 +198,7 @@ export default function TrajectorySearch({ initialPlate = '', cameras = [] }) {
                 {wp.snapshot_url && (
                   <div style={{ marginTop: '8px', borderRadius: '6px', overflow: 'hidden', border: '1px solid #374151' }}>
                     <img
-                      src={`http://localhost:8000${wp.snapshot_url}`}
+                      src={`https://sentinel-api-bqfm.onrender.com${wp.snapshot_url}`}
                       alt="CCTV Evidence Crop"
                       style={{ width: '100%', height: '90px', objectFit: 'cover', display: 'block' }}
                       onError={(e) => { e.target.style.display = 'none'; }}

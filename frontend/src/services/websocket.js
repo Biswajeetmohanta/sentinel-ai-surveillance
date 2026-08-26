@@ -1,4 +1,4 @@
-﻿class WebSocketService {
+class WebSocketService {
   constructor() {
     this.ws = null;
     this.subscribers = new Set();
@@ -8,7 +8,7 @@
   connect() {
     if (this.ws && this.ws.readyState === WebSocket.OPEN) return;
 
-    this.ws = new WebSocket('ws://localhost:8000/ws/alerts');
+    this.ws = new WebSocket('wss://sentinel-api-bqfm.onrender.com/ws/alerts');
 
     this.ws.onopen = () => {
       console.log('Connected to Sentinel Real-Time Surveillance WebSocket');

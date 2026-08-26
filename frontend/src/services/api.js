@@ -1,6 +1,7 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000/api/v1';
+export const BACKEND_URL = 'https://sentinel-api-bqfm.onrender.com';
+const API_BASE_URL = `${BACKEND_URL}/api/v1`;
 
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
