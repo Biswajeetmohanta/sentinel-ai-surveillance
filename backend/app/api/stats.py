@@ -1,13 +1,13 @@
-﻿from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy import func
 from datetime import datetime, timedelta
 from typing import Dict, Any
 
-from backend.app.core.database import get_db
-from backend.app.models.db_models import Camera, Detection, Watchlist
-from backend.app.models.schemas import DashboardStats
+from app.core.database import get_db
+from app.models.db_models import Camera, Detection, Watchlist
+from app.models.schemas import DashboardStats
 
 router = APIRouter(prefix="/stats", tags=["Dashboard Statistics"])
 

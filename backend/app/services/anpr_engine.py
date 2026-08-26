@@ -1,4 +1,4 @@
-﻿import re
+import re
 import os
 import cv2
 import numpy as np
@@ -8,9 +8,9 @@ from typing import Optional, Dict, Any, Tuple
 from sqlalchemy.future import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app.core.config import settings
-from backend.app.models.db_models import Detection, Watchlist, Camera
-from backend.app.api.websocket import manager as ws_manager
+from app.core.config import settings
+from app.models.db_models import Detection, Watchlist, Camera
+from app.api.websocket import manager as ws_manager
 
 logger = logging.getLogger(__name__)
 

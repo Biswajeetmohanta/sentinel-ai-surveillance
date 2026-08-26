@@ -1,12 +1,12 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
+from fastapi import APIRouter, Depends, HTTPException, status, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List, Optional
 import csv
 import io
-from backend.app.core.database import get_db
-from backend.app.models.db_models import Watchlist
-from backend.app.models.schemas import WatchlistCreate, WatchlistUpdate, WatchlistResponse
+from app.core.database import get_db
+from app.models.db_models import Watchlist
+from app.models.schemas import WatchlistCreate, WatchlistUpdate, WatchlistResponse
 
 router = APIRouter(prefix="/watchlist", tags=["Watchlist"])
 

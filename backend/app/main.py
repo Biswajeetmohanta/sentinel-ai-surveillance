@@ -1,15 +1,20 @@
-﻿from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from contextlib import asynccontextmanager
 import logging
+import sys
 import os
 
-from backend.app.core.config import settings
-from backend.app.core.database import engine, Base, AsyncSessionLocal
-from backend.app.models.db_models import Camera, Watchlist, Detection
-from backend.app.api import cameras, watchlist, detections, stats, websocket
-from backend.app.services.stream_manager import stream_manager
+# Add paths to sys.path
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../..")))
+
+from app.core.config import settings
+from app.core.database import engine, Base, AsyncSessionLocal
+from app.models.db_models import Camera, Watchlist, Detection
+from app.api import cameras, watchlist, detections, stats, websocket
+from app.services.stream_manager import stream_manager
 from sqlalchemy.future import select
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")

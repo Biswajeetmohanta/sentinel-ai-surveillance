@@ -1,10 +1,10 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from typing import List
-from backend.app.core.database import get_db
-from backend.app.models.db_models import Camera
-from backend.app.models.schemas import CameraCreate, CameraUpdate, CameraResponse
+from app.core.database import get_db
+from app.models.db_models import Camera
+from app.models.schemas import CameraCreate, CameraUpdate, CameraResponse
 
 router = APIRouter(prefix="/cameras", tags=["Cameras"])
 

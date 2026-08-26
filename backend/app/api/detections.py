@@ -1,4 +1,4 @@
-﻿from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -7,9 +7,9 @@ from typing import List, Optional
 from datetime import datetime, timedelta
 import math
 
-from backend.app.core.database import get_db
-from backend.app.models.db_models import Detection, Camera, Watchlist
-from backend.app.models.schemas import (
+from app.core.database import get_db
+from app.models.db_models import Detection, Camera, Watchlist
+from app.models.schemas import (
     DetectionResponse,
     VehicleTrajectoryResponse,
     RouteWaypoint,

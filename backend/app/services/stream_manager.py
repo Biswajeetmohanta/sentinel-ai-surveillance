@@ -1,4 +1,4 @@
-﻿import asyncio
+import asyncio
 import random
 import logging
 import cv2
@@ -7,10 +7,10 @@ from datetime import datetime, timedelta
 from typing import Dict, List
 from sqlalchemy.future import select
 
-from backend.app.core.database import AsyncSessionLocal
-from backend.app.models.db_models import Camera, Watchlist, Detection
-from backend.app.services.anpr_engine import anpr_engine
-from backend.app.core.config import settings
+from app.core.database import AsyncSessionLocal
+from app.models.db_models import Camera, Watchlist, Detection
+from app.services.anpr_engine import anpr_engine
+from app.core.config import settings
 
 logger = logging.getLogger(__name__)
 
