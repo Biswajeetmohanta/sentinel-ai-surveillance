@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Navbar from './components/Navbar';
 import DashboardStats from './components/DashboardStats';
 import CameraGrid from './components/CameraGrid';
@@ -57,6 +57,7 @@ export default function App() {
 
   useEffect(() => {
     loadInitialData();
+    const interval = setInterval(loadInitialData, 8000);
 
     // Connect WebSocket
     wsService.connect();
@@ -84,6 +85,7 @@ export default function App() {
     });
 
     return () => {
+      clearInterval(interval);
       unsubscribe();
       wsService.disconnect();
     };
