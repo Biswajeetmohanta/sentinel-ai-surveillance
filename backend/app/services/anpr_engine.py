@@ -33,12 +33,17 @@ class ANPREngine:
         except Exception as e:
             logger.warning(f"Could not load YOLOv8 directly: {e}. Will use OpenCV/heuristic pipeline.")
 
-        try:
-            from paddleocr import PaddleOCR
-            self.ocr_engine = PaddleOCR(use_angle_cls=True, lang='en', show_log=False)
-            logger.info("PaddleOCR engine initialized.")
-        except Exception as e:
-            logger.warning(f"PaddleOCR not installed or unavailable: {e}. Using regex/heuristic OCR.")
+        # Load OCR engine in background daemon thread to avoid blocking server startup
+        def _bg_load_ocr():
+            try:
+                import easyocr
+                self.ocr_engine = easyocr.Reader(['en'], gpu=False)
+                logger.info("EasyOCR engine initialized successfully.")
+            except Exception as e:
+                logger.warning(f"EasyOCR background loading failed: {e}")
+
+        import threading
+        threading.Thread(target=_bg_load_ocr, daemon=True).start()
             
         self.initialized = True
 
@@ -75,23 +80,35 @@ class ANPREngine:
         return cleaned
 
     def extract_plate_text(self, plate_crop: np.ndarray) -> Tuple[str, float]:
-        """Perform OCR on license plate crop"""
+        """Perform OCR on license plate crop using EasyOCR or PaddleOCR"""
         if self.ocr_engine is not None:
             try:
                 processed = self.preprocess_plate_image(plate_crop)
-                result = self.ocr_engine.ocr(processed, cls=True)
-                if result and result[0]:
-                    full_text = ""
-                    total_conf = 0.0
-                    count = 0
-                    for line in result[0]:
-                        text, conf = line[1]
-                        full_text += text
-                        total_conf += conf
-                        count += 1
-                    cleaned = self.clean_plate_text(full_text)
-                    avg_conf = (total_conf / count) if count > 0 else 0.8
-                    return cleaned, round(avg_conf, 2)
+                # EasyOCR
+                if hasattr(self.ocr_engine, 'readtext'):
+                    results = self.ocr_engine.readtext(processed)
+                    if results:
+                        full_text = ""
+                        total_conf = 0.0
+                        for bbox, text, conf in results:
+                            full_text += text
+                            total_conf += conf
+                        cleaned = self.clean_plate_text(full_text)
+                        avg_conf = (total_conf / len(results)) if len(results) > 0 else 0.8
+                        return cleaned, round(avg_conf, 2)
+                # PaddleOCR Fallback
+                elif hasattr(self.ocr_engine, 'ocr'):
+                    result = self.ocr_engine.ocr(processed, cls=True)
+                    if result and result[0]:
+                        full_text = ""
+                        total_conf = 0.0
+                        for line in result[0]:
+                            text, conf = line[1]
+                            full_text += text
+                            total_conf += conf
+                        cleaned = self.clean_plate_text(full_text)
+                        avg_conf = (total_conf / len(result[0])) if len(result[0]) > 0 else 0.8
+                        return cleaned, round(avg_conf, 2)
             except Exception as e:
                 logger.error(f"OCR inference error: {e}")
         
@@ -127,6 +144,13 @@ class ANPREngine:
                                 detected_plate = text
                                 confidence = conf
                                 break
+
+            # Direct OCR fallback if image is a cropped plate or close-up photo
+            if not detected_plate and frame is not None and not mock_plate:
+                direct_text, direct_conf = self.extract_plate_text(frame)
+                if len(direct_text) >= 4:
+                    detected_plate = direct_text
+                    confidence = direct_conf
 
             if not detected_plate:
                 return None

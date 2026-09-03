@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from sqlalchemy.orm import selectinload
@@ -176,3 +176,53 @@ async def reconstruct_vehicle_trajectory(
         waypoints=waypoints,
         geojson_path=geojson_path
     )
+
+
+@router.post("/scan-image")
+async def scan_image_anpr(
+    file: UploadFile = File(...),
+    camera_id: Optional[int] = 1,
+    mock_plate: Optional[str] = None,
+    db: AsyncSession = Depends(get_db)
+):
+    """
+    Direct ANPR Diagnostic Scanner.
+    Accepts an image upload or captured video frame, runs YOLOv8 vehicle detection + EasyOCR,
+    checks against active Gujarat Police suspect watchlists, and triggers a real control room alert.
+    """
+    import cv2
+    import numpy as np
+    from app.services.anpr_engine import anpr_engine
+
+    contents = await file.read()
+    nparr = np.frombuffer(contents, np.uint8)
+    frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if frame is None:
+        raise HTTPException(status_code=400, detail="Invalid image file format")
+
+    cam = (await db.execute(select(Camera).where(Camera.id == camera_id))).scalar_one_or_none()
+    if not cam:
+        cam = (await db.execute(select(Camera))).scalars().first()
+
+    # If mock_plate specified, use it; otherwise run full automated YOLO + OCR
+    result = await anpr_engine.process_frame(frame, cam, db, mock_plate=mock_plate)
+    if not result:
+        vehicles = []
+        if anpr_engine.yolo_model:
+            yolo_res = anpr_engine.yolo_model(frame, verbose=False)
+            for r in yolo_res:
+                for box in r.boxes:
+                    cls_id = int(box.cls[0])
+                    name = anpr_engine.yolo_model.names.get(cls_id, "Unknown")
+                    vehicles.append({"class": name, "confidence": round(float(box.conf[0]), 2)})
+        return {
+            "success": False,
+            "message": "Vehicle detected but license plate not clearly visible",
+            "vehicles_detected": vehicles
+        }
+
+    return {
+        "success": True,
+        "detection": result
+    }
+

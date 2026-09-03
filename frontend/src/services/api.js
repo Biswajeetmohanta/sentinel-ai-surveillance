@@ -1,6 +1,16 @@
 import axios from 'axios';
 
-export const BACKEND_URL = 'https://sentinel-api-bqfm.onrender.com';
+const getBackendUrl = () => {
+  if (import.meta.env.VITE_BACKEND_URL) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+    return 'http://localhost:8001';
+  }
+  return 'https://sentinel-api-bqfm.onrender.com';
+};
+
+export const BACKEND_URL = getBackendUrl();
 const API_BASE_URL = `${BACKEND_URL}/api/v1`;
 
 export const apiClient = axios.create({

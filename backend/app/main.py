@@ -13,7 +13,8 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "../.
 from app.core.config import settings
 from app.core.database import engine, Base, AsyncSessionLocal
 from app.models.db_models import Camera, Watchlist, Detection
-from app.api import cameras, watchlist, detections, stats, websocket
+from app.api import cameras, watchlist, detections, stats, websocket, stream, hls_proxy, auth
+from app.api.auth import seed_default_user
 from app.services.stream_manager import stream_manager
 from sqlalchemy.future import select
 
@@ -146,6 +147,7 @@ async def lifespan(app: FastAPI):
         await conn.run_sync(Base.metadata.create_all)
     
     await seed_initial_data()
+    await seed_default_user()
     await stream_manager.start()
     yield
     # Shutdown
@@ -174,10 +176,17 @@ os.makedirs(settings.SNAPSHOT_STORAGE_PATH, exist_ok=True)
 app.mount("/snapshots", StaticFiles(directory=settings.SNAPSHOT_STORAGE_PATH), name="snapshots")
 
 # Include Routers
+app.include_router(auth.router, prefix=settings.API_V1_STR)
 app.include_router(cameras.router, prefix=settings.API_V1_STR)
 app.include_router(watchlist.router, prefix=settings.API_V1_STR)
 app.include_router(detections.router, prefix=settings.API_V1_STR)
 app.include_router(stats.router, prefix=settings.API_V1_STR)
+app.include_router(stream.router, prefix=settings.API_V1_STR)
+app.include_router(hls_proxy.router, prefix=settings.API_V1_STR)
+
+@app.get("/enc.key")
+async def root_encryption_key():
+    return await hls_proxy.get_encryption_key()
 
 # Real-time WebSocket Endpoint
 @app.websocket("/ws/alerts")

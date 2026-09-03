@@ -1,21 +1,30 @@
-﻿@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap";
 
 :root {
-  --bg-primary: #0b0f19;
-  --bg-secondary: #111827;
-  --bg-card: rgba(17, 24, 39, 0.85);
+  --bg-primary: #080c14;
+  --bg-secondary: #0f172a;
+  --bg-card: rgba(15, 23, 42, 0.82);
+  --bg-card-elevated: rgba(22, 33, 62, 0.9);
   --border-color: rgba(255, 255, 255, 0.08);
+  --border-hover: rgba(59, 130, 246, 0.4);
   --border-focus: #3b82f6;
-  --text-primary: #f9fafb;
-  --text-secondary: #9ca3af;
-  --text-muted: #6b7280;
+  
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
   
   --accent-blue: #3b82f6;
+  --accent-blue-glow: rgba(59, 130, 246, 0.35);
   --accent-cyan: #06b6d4;
   --accent-emerald: #10b981;
-  --accent-rose: #f43f5e;
+  --accent-emerald-glow: rgba(16, 185, 129, 0.35);
   --accent-amber: #f59e0b;
+  --accent-rose: #f43f5e;
   --alert-red: #ef4444;
+  --alert-red-glow: rgba(239, 68, 68, 0.45);
+  
+  --police-gold: #fbbf24;
+  --header-height: 72px;
 }
 
 * {
@@ -23,59 +32,79 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
 }
 
 body {
   background-color: var(--bg-primary);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(30, 58, 138, 0.15) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(15, 23, 42, 0.4) 0px, transparent 50%);
   color: var(--text-primary);
   min-height: 100vh;
   overflow-x: hidden;
+  line-height: 1.5;
 }
 
-/* Custom Scrollbar */
+/* Custom Sleek Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0f19;
+  background: rgba(8, 12, 20, 0.8);
 }
 ::-webkit-scrollbar-thumb {
-  background: #1f2937;
-  border-radius: 3px;
+  background: #1e293b;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #374151;
+  background: #334155;
 }
 
-/* Glassmorphism Card Effect */
+/* Glassmorphism Card System */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  border-radius: 14px;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.03);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .glass-card-hover:hover {
-  border-color: rgba(59, 130, 246, 0.4);
+  border-color: var(--border-hover);
+  box-shadow: 0 14px 36px -4px rgba(0, 0, 0, 0.6), 0 0 20px -2px var(--accent-blue-glow);
   transform: translateY(-2px);
-  transition: all 0.2s ease-in-out;
 }
 
-/* Monospace Plate Style */
+/* Indian High Security Registration Plate (HSRP) Aesthetic */
 .plate-badge {
   font-family: 'JetBrains Mono', monospace;
-  font-weight: 700;
-  letter-spacing: 1.5px;
-  background: #fbbf24;
-  color: #000;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1.5px solid #000;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  font-weight: 800;
+  letter-spacing: 2px;
+  background: #ffcc00;
+  color: #111827;
+  padding: 3px 10px;
+  border-radius: 5px;
+  border: 2px solid #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.4);
   display: inline-flex;
   align-items: center;
+  gap: 6px;
+  text-transform: uppercase;
+  user-select: all;
+}
+
+.plate-badge::before {
+  content: 'IND';
+  font-size: 8px;
+  font-weight: 900;
+  letter-spacing: 0px;
+  color: #1e3a8a;
+  border-right: 1px solid rgba(0, 0, 0, 0.25);
+  padding-right: 4px;
 }
 
 .plate-badge-white {
@@ -84,7 +113,17 @@ body {
 }
 
 .plate-badge-green {
-  background: #15803d;
+  background: #16a34a;
+  color: #ffffff;
+}
+
+.plate-badge-commercial {
+  background: #eab308;
+  color: #000;
+}
+
+.plate-badge-red {
+  background: #ef4444;
   color: #ffffff;
 }
 
@@ -94,7 +133,7 @@ body {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
   }
   70% {
-    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+    box-shadow: 0 0 0 14px rgba(239, 68, 68, 0);
   }
   100% {
     box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
@@ -106,8 +145,14 @@ body {
 }
 
 @keyframes live-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.3; }
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.5;
+  }
 }
 
 .live-dot {
@@ -116,28 +161,241 @@ body {
   background-color: #10b981;
   border-radius: 50%;
   display: inline-block;
-  animation: live-pulse 1.5s infinite;
+  box-shadow: 0 0 8px #10b981;
+  animation: live-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-/* Leaflet Map overrides for dark theme */
+.live-dot-red {
+  background-color: #ef4444;
+  box-shadow: 0 0 8px #ef4444;
+}
+
+/* Leaflet Dark Map Overrides */
 .leaflet-container {
   width: 100%;
   height: 100%;
-  background-color: #1e293b !important;
+  background-color: #0b0f19 !important;
   border-radius: 12px;
+  font-family: 'Inter', sans-serif !important;
 }
+
 .leaflet-popup-content-wrapper {
-  background: #111827 !important;
-  color: #f9fafb !important;
-  border: 1px solid #374151 !important;
-  border-radius: 8px !important;
-  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5) !important;
+  background: #0f172a !important;
+  color: #f8fafc !important;
+  border: 1px solid #334155 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.8) !important;
+  padding: 0 !important;
 }
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+  line-height: 1.4 !important;
+}
+
 .leaflet-popup-tip {
-  background: #111827 !important;
+  background: #0f172a !important;
+  border: 1px solid #334155 !important;
 }
+
+.leaflet-control-zoom {
+  border: 1px solid #334155 !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.5) !important;
+}
+
 .leaflet-control-zoom-in, .leaflet-control-zoom-out {
-  background: #1f2937 !important;
-  color: #fff !important;
-  border-color: #374151 !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: #334155 !important;
+  transition: all 0.2s ease !important;
 }
+
+.leaflet-control-zoom-in:hover, .leaflet-control-zoom-out:hover {
+  background: #334155 !important;
+  color: #60a5fa !important;
+}
+
+/* Interactive Button Styles */
+.btn-primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(30, 41, 59, 0.8);
+  color: #e2e8f0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(51, 65, 85, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+}
+
+.btn-danger {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-danger:hover {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+}
+
+/* Modal Animations */
+@keyframes fadeInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.modal-content-animated {
+  animation: fadeInScale 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Layout Utilities & Responsive Grid Helpers */
+.surveillance-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 1fr) minmax(380px, 1.4fr) 340px;
+  gap: 20px;
+  height: calc(100vh - 270px);
+  min-height: 540px;
+}
+
+@media (max-width: 1440px) {
+  .surveillance-layout {
+    grid-template-columns: 1fr 1.2fr 320px;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 1200px) {
+  .surveillance-layout {
+    grid-template-columns: 1fr 1fr;
+    height: auto;
+    min-height: auto;
+  }
+  .surveillance-layout > .alert-column {
+    grid-column: 1 / -1;
+    height: 380px;
+  }
+}
+
+@media (max-width: 768px) {
+  .surveillance-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .surveillance-layout > div {
+    min-height: 420px;
+  }
+}
+
+/* Responsive Table Wrapper */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Scanline Effect Overlay */
+.scanline-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    rgba(18, 16, 16, 0) 50%, 
+    rgba(0, 0, 0, 0.25) 50%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  opacity: 0.3;
+}
+
+/* Tactical Dark Tile Filter for OpenStreetMap (Clean Dark Mode without API Keys) */
+.leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(95%);
+}
+
+/* Responsive Navbar Rules */
+@media (max-width: 1100px) {
+  .desktop-search {
+    display: none !important;
+  }
+  .desktop-time {
+    display: none !important;
+  }
+}
+
+@media (max-width: 860px) {
+  .desktop-nav {
+    display: none !important;
+  }
+  .desktop-status {
+    display: none !important;
+  }
+  .desktop-logout-btn {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 861px) {
+  .mobile-menu-btn {
+    display: none !important;
+  }
+}
+

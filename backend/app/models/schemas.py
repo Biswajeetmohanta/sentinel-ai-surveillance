@@ -1,33 +1,51 @@
-﻿from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field
 from typing import Optional, List
 from datetime import datetime
 
 # --- Camera Schemas ---
 class CameraBase(BaseModel):
+    camera_code: Optional[str] = None
     name: str
     department: Optional[str] = "Gujarat Police"
+    camera_type: Optional[str] = "Fixed Bullet"
+    ownership: Optional[str] = "Gujarat Police"
     location_name: str
     latitude: float
     longitude: float
     rtsp_url: str
+    hls_url: Optional[str] = None
+    webrtc_url: Optional[str] = None
     stream_type: Optional[str] = "RTSP"
     status: Optional[str] = "ONLINE"
     is_active: Optional[bool] = True
     fps_processing: Optional[int] = 5
+    coverage_radius_meters: Optional[float] = 150.0
+    installation_year: Optional[int] = 2023
+    storage_details: Optional[str] = "NVR 30-Day On-Premise"
+    maintenance_status: Optional[str] = "Operational"
 
 class CameraCreate(CameraBase):
     pass
 
 class CameraUpdate(BaseModel):
+    camera_code: Optional[str] = None
     name: Optional[str] = None
     department: Optional[str] = None
+    camera_type: Optional[str] = None
+    ownership: Optional[str] = None
     location_name: Optional[str] = None
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     rtsp_url: Optional[str] = None
+    hls_url: Optional[str] = None
+    webrtc_url: Optional[str] = None
     status: Optional[str] = None
     is_active: Optional[bool] = None
     fps_processing: Optional[int] = None
+    coverage_radius_meters: Optional[float] = None
+    installation_year: Optional[int] = None
+    storage_details: Optional[str] = None
+    maintenance_status: Optional[str] = None
 
 class CameraResponse(CameraBase):
     id: int
@@ -136,3 +154,22 @@ class DashboardStats(BaseModel):
     total_watchlist_alerts_today: int
     active_hotlist_count: int
     hotlist_breakdown: dict
+
+
+# --- User & Auth Schemas ---
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+class UserResponse(BaseModel):
+    id: int
+    email: str
+    name: str
+    role: str
+    badge_number: str
+    department: str
+    token: str
+
+    class Config:
+        from_attributes = True
+

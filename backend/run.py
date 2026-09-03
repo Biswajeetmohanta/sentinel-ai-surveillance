@@ -6,10 +6,11 @@ import sys
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 if __name__ == "__main__":
+    from app.core.config import settings
     uvicorn.run(
         "app.main:app",
-        host="0.0.0.0",
-        port=8000,
-        reload=True,
+        host=settings.HOST,
+        port=settings.PORT,
+        reload=False,
         workers=1
     )

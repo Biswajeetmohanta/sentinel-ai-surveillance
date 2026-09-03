@@ -7,16 +7,25 @@ class Camera(Base):
     __tablename__ = "cameras"
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    camera_code = Column(String(50), nullable=True, index=True) # e.g. cam01, cam02
     name = Column(String(100), nullable=False, index=True)
     department = Column(String(100), default="Gujarat Police")
+    camera_type = Column(String(50), default="Fixed Bullet") # PTZ, Fixed Bullet, Dome, ANPR HSRP, 360 Fisheye
+    ownership = Column(String(100), default="Gujarat Police")
     location_name = Column(String(255), nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False)
     rtsp_url = Column(Text, nullable=False)
-    stream_type = Column(String(50), default="RTSP") # RTSP, WebRTC, File
-    status = Column(String(20), default="ONLINE")     # ONLINE, OFFLINE, ERROR
+    hls_url = Column(Text, nullable=True)
+    webrtc_url = Column(Text, nullable=True)
+    stream_type = Column(String(50), default="RTSP") # RTSP, WebRTC, HLS, File
+    status = Column(String(20), default="ONLINE")     # ONLINE, OFFLINE, MAINTENANCE
     is_active = Column(Boolean, default=True)
     fps_processing = Column(Integer, default=5)
+    coverage_radius_meters = Column(Float, default=150.0)
+    installation_year = Column(Integer, default=2023)
+    storage_details = Column(String(100), default="NVR 30-Day On-Premise")
+    maintenance_status = Column(String(50), default="Operational")
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -60,3 +69,18 @@ class Detection(Base):
 
     camera = relationship("Camera", back_populates="detections")
     watchlist_entry = relationship("Watchlist")
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True, index=True, autoincrement=True)
+    email = Column(String(120), unique=True, index=True, nullable=False)
+    name = Column(String(100), default="Jyoti (Control Room Officer)")
+    password_hash = Column(String(255), nullable=False)
+    role = Column(String(50), default="Surveillance Officer")
+    badge_number = Column(String(50), default="GP-7829")
+    department = Column(String(100), default="Gujarat Police Headquarters")
+    is_active = Column(Boolean, default=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+

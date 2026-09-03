@@ -1,4 +1,4 @@
-﻿from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings
 from typing import Optional
 import os
 
@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     API_V1_STR: str = "/api/v1"
     DEBUG: bool = True
     HOST: str = "0.0.0.0"
-    PORT: int = 8000
+    PORT: int = 8001
     
     # Database
     DATABASE_URL: str = "sqlite+aiosqlite:///./sentinel.db"
@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     SNAPSHOT_STORAGE_PATH: str = "./uploads/snapshots"
     
     class Config:
-        env_file = ".env"
+        env_file = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), ".env")
         extra = "allow"
 
 settings = Settings()
