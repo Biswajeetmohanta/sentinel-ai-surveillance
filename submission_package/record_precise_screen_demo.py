@@ -120,38 +120,35 @@ async def record_screen(durations):
         # -------------------------------------------------------------
         dur1 = durations["seg1_auth"]
         print(f"\n[Recording Seg 1: Officer Authentication & Security Gateway] ({dur1:.1f}s)", flush=True)
-        # Check if already logged in or login form visible
+        # Check if login form visible
         try:
-            await page.wait_for_selector("input[type='email']", timeout=5000)
-            has_login = True
-        except Exception:
-            has_login = False
+            submit_btn = page.locator("button[type='submit'], button:has-text('Access Command Center')").first
+            if await submit_btn.is_visible():
+                print("Credentials already pre-filled. Displaying security card and clicking Access Command Center...", flush=True)
+                # Hover over pre-filled Officer ID
+                await page.mouse.move(960, 480)
+                await asyncio.sleep(3)
+                # Hover over Password
+                await page.mouse.move(960, 560)
+                await asyncio.sleep(2)
+                # Hover and click Access Command Center button
+                await submit_btn.hover()
+                await asyncio.sleep(2)
+                await submit_btn.click()
+                print("Clicked login button, waiting for main dashboard...", flush=True)
+                try:
+                    await page.wait_for_selector(".camera-item, nav, div:has-text('Chimanbhai Bridge')", timeout=15000)
+                except Exception:
+                    pass
+                await asyncio.sleep(3)
+            else:
+                await page.mouse.move(960, 540)
+                await asyncio.sleep(5)
+        except Exception as e:
+            print(f"Login card note: {e}", flush=True)
 
-        if has_login:
-            print("Found login form, filling officer credentials...", flush=True)
-            login_input = page.locator("input[type='email']")
-            await page.mouse.move(960, 380)
-            await asyncio.sleep(2)
-            await login_input.click()
-            await page.keyboard.type("jyoti@deventtechnology.com", delay=50)
-            await asyncio.sleep(1)
-            
-            pwd_input = page.locator("input[type='password']")
-            await pwd_input.click()
-            await page.keyboard.type("123456", delay=50)
-            await asyncio.sleep(1)
-            
-            submit_btn = page.locator("button[type='submit']")
-            await submit_btn.hover()
-            await asyncio.sleep(1.5)
-            await submit_btn.click()
-            await asyncio.sleep(3)
-        else:
-            await page.mouse.move(960, 540)
-            await asyncio.sleep(5)
-        
         # Remaining time for seg1
-        rem1 = max(1.0, dur1 - 10.0)
+        rem1 = max(1.0, dur1 - 12.0)
         await asyncio.sleep(rem1)
 
         # -------------------------------------------------------------

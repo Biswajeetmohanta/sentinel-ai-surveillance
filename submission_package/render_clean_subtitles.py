@@ -75,13 +75,13 @@ def burn_subtitles(srt_file):
     # Modern styling: Clean font, semi-transparent black background box for high readability
     sub_style = (
         "Fontname=Arial,"
-        "Fontsize=20,"
+        "Fontsize=17,"
         "PrimaryColour=&H00FFFFFF,"
         "BackColour=&H80000000,"
         "BorderStyle=4,"
         "Outline=1,"
         "Shadow=0,"
-        "MarginV=38,"
+        "MarginV=30,"
         "Alignment=2"
     )
 
