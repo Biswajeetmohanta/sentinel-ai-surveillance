@@ -122,9 +122,15 @@ class StreamManager:
 
     async def start(self):
         self.is_running = True
-        logger.info("Sentinel AI ANPR Engine initialized - Real camera analysis mode active (Simulation DISABLED).")
+        logger.info("Sentinel AI ANPR Engine initialized - Real camera analysis mode active.")
         
-        # Spawn live RTSP worker for primary key junction camera (e.g. cam01 Chimanbhai Bridge)
+        # On cloud instances (Render), disable continuous background RTSP decoding by default so CPU stays 100% free for instant Login & API responses
+        enable_rtsp = os.getenv("ENABLE_RTSP_WORKER", "false").lower() in ("true", "1", "yes")
+        if not enable_rtsp:
+            logger.info("Background RTSP worker idle for cloud performance. API endpoints and Login will respond instantaneously.")
+            return
+
+        # Spawn live RTSP worker if explicitly enabled
         async with AsyncSessionLocal() as session:
             cam_res = await session.execute(select(Camera).where(Camera.camera_code == "cam01"))
             cam = cam_res.scalar_one_or_none()
