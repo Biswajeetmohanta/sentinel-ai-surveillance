@@ -52,75 +52,38 @@ async def auto_migrate_sqlite():
             logger.warning(f"Auto-migration note: {e}")
 
 async def seed_initial_data():
-    """Seed sample Gujarat Police CCTV camera network & suspect watchlist"""
+    """Ensure all 30 official Gujarat Police cameras exist in database"""
     async with AsyncSessionLocal() as session:
-        # 1. Seed Cameras across Ahmedabad & Gandhinagar
-        cams_exist = (await session.execute(select(Camera))).scalars().first()
-        if not cams_exist:
-            sample_cameras = [
-                Camera(
-                    name="SG Highway - ISKCON Cross Road",
-                    department="Gujarat Traffic Police",
-                    location_name="ISKCON Junction, SG Highway, Ahmedabad",
-                    latitude=23.0286,
-                    longitude=72.5068,
-                    rtsp_url="rtsp://localhost:8554/cam_iskcon",
-                    status="ONLINE",
-                    fps_processing=5
-                ),
-                Camera(
-                    name="Sindhu Bhavan Road - Taj Skyline Junction",
-                    department="Ahmedabad City Police",
-                    location_name="Sindhu Bhavan Marg, Bodakdev",
-                    latitude=23.0398,
-                    longitude=72.4984,
-                    rtsp_url="rtsp://localhost:8554/cam_sbr",
-                    status="ONLINE",
-                    fps_processing=5
-                ),
-                Camera(
-                    name="Ashram Road - Income Tax Circle",
-                    department="Gujarat Traffic Police",
-                    location_name="Income Tax Circle, Ashram Road",
-                    latitude=23.0416,
-                    longitude=72.5714,
-                    rtsp_url="rtsp://localhost:8554/cam_ashram",
-                    status="ONLINE",
-                    fps_processing=5
-                ),
-                Camera(
-                    name="Gandhinagar - CH-0 Secretariat Circle",
-                    department="Gandhinagar Police",
-                    location_name="Sector 10, New Sachivalaya, Gandhinagar",
-                    latitude=23.2156,
-                    longitude=72.6369,
-                    rtsp_url="rtsp://localhost:8554/cam_sachivalaya",
-                    status="ONLINE",
-                    fps_processing=5
-                ),
-                Camera(
-                    name="GIFT City - Entry Gate Tollway",
-                    department="GIFT City Security Unit",
-                    location_name="GIFT City Main Boulevard",
-                    latitude=23.1593,
-                    longitude=72.6841,
-                    rtsp_url="rtsp://localhost:8554/cam_gift",
-                    status="ONLINE",
-                    fps_processing=5
-                ),
-                Camera(
-                    name="Kalupur - Railway Station South Gate",
-                    department="Railway Police Force (RPF)",
-                    location_name="Kalupur Railway Station, Old City",
-                    latitude=23.0232,
-                    longitude=72.5999,
-                    rtsp_url="rtsp://localhost:8554/cam_kalupur",
-                    status="ONLINE",
-                    fps_processing=5
-                )
-            ]
-            session.add_all(sample_cameras)
-            logger.info("Seeded 6 primary Gujarat Police CCTV cameras.")
+        # 1. Seed or Upgrade to 30 Official Gujarat Police Cameras
+        res = await session.execute(select(Camera))
+        existing_cams = res.scalars().all()
+
+        needs_upgrade = (
+            len(existing_cams) < 30 or
+            any(c.name.startswith("SG Highway") for c in existing_cams) or
+            any(c.camera_code is None for c in existing_cams)
+        )
+
+        if needs_upgrade:
+            logger.info("Upgrading camera network to all 30 official Gujarat Police cameras...")
+            try:
+                from seed_official_cameras import OFFICIAL_CAMERAS_DATA
+            except ImportError:
+                import sys
+                sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+                from seed_official_cameras import OFFICIAL_CAMERAS_DATA
+
+            # Clear outdated mock cameras
+            for old_cam in existing_cams:
+                await session.delete(old_cam)
+            await session.commit()
+
+            # Insert all 30 real Gujarat Police cameras
+            for cdata in OFFICIAL_CAMERAS_DATA:
+                cam = Camera(**cdata)
+                session.add(cam)
+            await session.commit()
+            logger.info(f"Successfully seeded {len(OFFICIAL_CAMERAS_DATA)} official Gujarat Police cameras (cam01 - cam30).")
 
         # 2. Seed High-Priority Suspect Watchlist
         wl_exist = (await session.execute(select(Watchlist))).scalars().first()
