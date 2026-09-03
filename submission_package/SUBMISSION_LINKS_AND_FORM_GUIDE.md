@@ -3,6 +3,21 @@
 
 This guide provides the exact mapping for every field shown in the client's Google Form submission screenshot.
 
+## 🌐 Live Production Demo Access & Verified Credentials
+
+Reviewers and committee members can directly access and evaluate the live, deployed platform:
+
+| Parameter | Live Production Detail |
+| :--- | :--- |
+| **Live Web Application** | **`https://sentinel.deventtechnology.com`** |
+| **Live Backend & OpenAPI** | **`https://sentinel-api-bqfm.onrender.com`** |
+| **Interactive API Docs** | **`https://sentinel-api-bqfm.onrender.com/docs`** |
+| **Authorized Officer Email** | **`jyoti@deventtechnology.com`** |
+| **Access Password** | **`123456`** |
+| **Assigned Officer Role** | Superintendent of Police (IT & Cyber) • Badge: GP-7829 |
+| **Live CCTV Nodes** | **30 Official Gujarat Police Cameras** (`cam01`–`cam30`) |
+| **Streaming Engine** | Hardware-Accelerated 60 FPS HLS Proxy with GPU Decryption |
+
 ---
 
 ## 🎯 Field-by-Field Submission Cheat Sheet

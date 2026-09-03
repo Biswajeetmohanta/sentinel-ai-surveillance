@@ -513,10 +513,10 @@ def build_perfect_presentation():
 
     # 4 Cards on Top
     dash_cards = [
-        (0.8, "📺 Live Multi-Cam Grid", "1/4/9/16-channel WebRTC streams with AI bounding box overlays.", ACCENT_CYAN),
-        (3.8, "🚨 Alert History & Logs", "Real-time alert feed with 1-click acknowledgement and audit logs.", ACCENT_RED),
-        (6.8, "🔎 Vehicle Search", "Search by plate, location, vehicle class, and date/time windows.", ACCENT_PURPLE),
-        (9.8, "⚙️ Camera & Hotlist Hub", "Bulk CSV import for CCTNS FIR lists & camera management.", ACCENT_GREEN)
+        (0.8, "📺 30 Live CCTV Grid", "30 official Gujarat Police cameras with 60 FPS hardware HLS streams.", ACCENT_CYAN),
+        (3.8, "🔒 Officer Security & RBAC", "Salted SHA-256 gated login: SP IT & Cyber (Badge: GP-7829).", ACCENT_GREEN),
+        (6.8, "🚨 Instant Hotlist Alerts", "Sub-second cross-reference against CCTNS stolen FIR watchlists.", ACCENT_RED),
+        (9.8, "🌐 Live Cloud Platform", "sentinel.deventtechnology.com with 24/7 keep-alive monitoring.", ACCENT_PURPLE)
     ]
 
     for left, title, desc, col in dash_cards:
@@ -534,10 +534,10 @@ def build_perfect_presentation():
     bar_rect.line.color.rgb = CARD_BORDER
 
     metrics = [
-        ("< 150ms", "WebRTC Stream Latency", CYAN_LIGHT),
-        ("100% Async", "Non-Blocking ASGI Core", PURPLE_LIGHT),
-        ("Air-Gapped", "Zero External APIs", GREEN_LIGHT),
-        ("CI/CD Ready", "GitHub Actions Automated", AMBER_LIGHT)
+        ("30 Feeds", "Live Gujarat Police Cameras", CYAN_LIGHT),
+        ("SHA-256", "Officer Security Gateway", GREEN_LIGHT),
+        ("< 1s", "Hotlist Alert Latency", RED_LIGHT),
+        ("24/7 Live", "Continuous Cloud Uptime", AMBER_LIGHT)
     ]
 
     for i, (val, lbl, col) in enumerate(metrics):
@@ -561,7 +561,7 @@ def build_perfect_presentation():
     # =========================================================================
     s8 = prs.slides.add_slide(blank_layout)
     set_bg(s8)
-    add_header(s8, "Summary, Operational ROI & Next Steps", "VALUE SUMMARY", "High operational impact with massive recurring cost savings for government infrastructure.", 8)
+    add_header(s8, "Summary, Live Production Demo & Next Steps", "VALUE SUMMARY", "High operational impact with verified production cloud availability.", 8)
 
     tf_roi = add_card(s8, 0.8, 1.7, 5.6, 4.9, "💰 Massive Cost & Infrastructure ROI", "Zero Recurring SaaS Fees", ACCENT_GREEN)
     roi_items = [
@@ -577,19 +577,21 @@ def build_perfect_presentation():
         p.font.color.rgb = TEXT_LIGHT
         p.space_before = Pt(10)
 
-    tf_road = add_card(s8, 6.8, 1.7, 5.7, 4.9, "🚀 Future Roadmap Enhancements", "Phase 2 Capabilities", ACCENT_CYAN)
+    tf_road = add_card(s8, 6.8, 1.7, 5.7, 4.9, "🌐 Live Production Demo Access", "Direct Evaluation Access", ACCENT_CYAN)
     road_items = [
-        ("Section-Control Speed Radar", "Automated speed violation detection across long highway corridors."),
-        ("E-Challan Integration", "Helmet, triple riding, and red-light violation detection modules."),
-        ("Edge AI Checkpoint Boxes", "NVIDIA Jetson deployment for remote highway entry/exit toll plazas."),
-        ("Inter-District Police Sync", "Federated hotlist sync across Ahmedabad, Surat, and Rajkot zones.")
+        ("Live Web Dashboard", "https://sentinel.deventtechnology.com"),
+        ("Live API Backend", "https://sentinel-api-bqfm.onrender.com/docs"),
+        ("Officer Login Email", "jyoti@deventtechnology.com (Superintendent of Police)"),
+        ("Officer Password", "123456 (Badge Number: GP-7829)"),
+        ("Active Feeds", "30 Official Gujarat Police Cameras (cam01 - cam30)"),
+        ("Uptime Monitoring", "Automated 24/7 keep-alive monitor enabled.")
     ]
     for h, d in road_items:
         p = tf_road.add_paragraph()
         p.text = f"• {h}: {d}"
         p.font.size = Pt(11)
         p.font.color.rgb = TEXT_LIGHT
-        p.space_before = Pt(10)
+        p.space_before = Pt(8)
 
     for fname in ["Sentinel_AI_Surveillance_Presentation.pptx", "Sentinel_AI_Presentation_Final.pptx", "Sentinel_AI_Solution_Presentation.pptx"]:
         try:

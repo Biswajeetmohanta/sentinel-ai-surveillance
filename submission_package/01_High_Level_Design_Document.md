@@ -85,11 +85,23 @@ Refer to vector architecture diagram: [`01_High_Level_Architecture_Diagram.svg`]
 - **Local NVMe Storage:** Stores localized plate crop thumbnails and full-frame snapshots without external cloud storage requirements.
 
 ### 3.5 Tier 5: Web-Based Command Center UI
-- **Technology:** React 18, Tailwind CSS, Lucide Icons, Leaflet.js.
-- **Interactive GIS Map:** Real-time camera markers, color-coded health states, dynamic breadcrumb animations, and vehicle journey playback.
-- **Live Video Matrix:** Configurable 1, 4, 9, or 16-channel live video feeds.
+- **Technology:** React 18, Vanilla CSS Design System, Lucide Icons, Leaflet.js.
+- **Interactive GIS Map:** Real-time camera markers, color-coded health states, dynamic breadcrumb animations, and vehicle journey playback across Gujarat.
+- **Live Video Matrix & CCTV Player:** Hardware-accelerated 60 FPS HLS player with GPU decoding and dynamic AES-128 key handshake.
 - **Real-Time Siren & Alert Sidebar:** Audio chimes and visual blinking banners for urgent incidents, complete with a 1-click acknowledgement and PCR dispatch workflow.
 - **Forensic Vehicle Search:** Wildcard plate search (`GJ01??1234`), date/time range filtering, and PDF dossier export.
+- **Mobile Responsive Drawer:** Seamless experience across control room video walls, laptops, and field smartphones.
+
+### 3.6 Tier 6: Enterprise Authentication & Access Control Gateway
+- **Cryptographic Security:** Salted SHA-256 password hashing with server-side nonce isolation.
+- **Officer Identity Schema:** Tracks Officer Name, Email, Badge ID, Department, Role (Superintendent, Inspector, Control Room Operator), and session expiration tokens.
+- **Gated Architecture:** Unauthenticated access to dashboard views, telemetry streams, and database records is strictly blocked.
+- **Session Lifecycles:** Stateful session authentication with secure header verification and one-click session invalidation (Logout).
+
+### 3.7 Tier 7: Official 30-Camera Real-Time Network & HLS Proxy Engine
+- **Full State Coverage:** 30 official Gujarat Police CCTV nodes spanning Ahmedabad, Gandhinagar, Surat, Vadodara, Rajkot, and Kutch (`cam01` to `cam30`).
+- **Authenticated Proxy Gateway:** Connects to Gujarat Police sandbox (`103.250.160.189` / `cctv.corp8.cloud`) with automated Basic Auth session negotiation.
+- **Dynamic Manifest Rewriting:** Intercepts HLS playlists, rewrites `.m3u8` references, and proxies AES-128 `/enc.key` decryption keys seamlessly to standard browsers without requiring VPN tunnels.
 
 ---
 
@@ -100,10 +112,24 @@ Refer to vector architecture diagram: [`01_High_Level_Architecture_Diagram.svg`]
 | **Pilot / Station** | 4 – 16 Cameras | 1x NVIDIA RTX 4060 (8GB) / Intel i7 | 16 GB RAM, 4 Cores | 1 TB SSD |
 | **Zone / Division** | 16 – 64 Cameras | 2x NVIDIA RTX 4080 (16GB) | 32 GB RAM, 8 Cores | 4 TB NVMe |
 | **City Command Centre** | 100+ Cameras | Clustered Edge Nodes + NVIDIA A4000 / L4 | 64 GB RAM, 16 Cores | 16+ TB RAID-6 |
+| **Cloud Production Demo** | 30 Live Nodes | Python 3.10 ASGI + SQLite / PostgreSQL | Hosted Container | Auto-Seeded Database |
 
 ---
 
-## 5. Information Security & Regulatory Compliance
-- **Air-Gapped Operation:** Operates 100% offline inside Gujarat Police State Data Centre (SDC).
-- **Data Sovereignty:** Zero data or telemetry transmitted outside the local secure perimeter.
-- **Role-Based Access Control (RBAC):** Granular operator vs supervisor privileges with full immutable audit trails.
+## 5. Live Production Cloud Deployment Architecture
+
+The platform is actively deployed and accessible for live field evaluation:
+
+- **Live Web Command Center:** `https://sentinel.deventtechnology.com`
+- **Live API & Streaming Core:** `https://sentinel-api-bqfm.onrender.com`
+- **Interactive Swagger Documentation:** `https://sentinel-api-bqfm.onrender.com/docs`
+- **Active Authorized Credentials:** `jyoti@deventtechnology.com` / `123456`
+- **High-Availability Keep-Alive Engine:** Configured with an automated cron monitor pinging the `/` health endpoint every 10 minutes to guarantee 24/7 continuous uptime with zero cold-start latency.
+
+---
+
+## 6. Information Security & Regulatory Compliance
+- **Air-Gapped Operation:** Capable of running 100% offline inside the Gujarat Police State Data Centre (SDC).
+- **Data Sovereignty:** Zero data or telemetry transmitted to external third-party cloud providers.
+- **Role-Based Access Control (RBAC):** Granular officer credentials with immutable access audit trails.
+

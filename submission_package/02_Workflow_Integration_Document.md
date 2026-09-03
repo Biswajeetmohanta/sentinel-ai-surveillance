@@ -154,3 +154,65 @@ sequenceDiagram
 
 ### 4.3 Dial 112 / PCR Dispatch
 - Direct webhook trigger dispatches alert notifications with GPS coordinates and fleeing heading to the nearest mobile patrol unit.
+
+---
+
+## 5. Security & Authentication API Specifications
+
+### 5.1 Officer Login & Token Verification
+```http
+POST /api/v1/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "jyoti@deventtechnology.com",
+  "password": "••••••"
+}
+```
+**Response:**
+```json
+{
+  "id": 1,
+  "email": "jyoti@deventtechnology.com",
+  "name": "Jyoti (Surveillance Commander)",
+  "role": "Superintendent of Police (IT & Cyber)",
+  "badge_number": "GP-7829",
+  "department": "Gujarat Police Command & Control Centre",
+  "token": "sentinel_gp_8a12f7..."
+}
+```
+
+### 5.2 Dynamic Credential Modification
+```http
+POST /api/v1/auth/update-credentials HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "jyoti@deventtechnology.com",
+  "current_password": "old_password",
+  "new_password": "new_secure_password"
+}
+```
+
+---
+
+## 6. Hardware-Accelerated HLS Streaming & On-Demand ANPR
+
+### 6.1 Authenticated Video Proxy Manifest
+```http
+GET /api/v1/hls/{camera_code}/index.m3u8 HTTP/1.1
+Host: sentinel-api-bqfm.onrender.com
+```
+* Dynamically fetches encrypted chunks from `cctv.corp8.cloud` with Gujarat Police credentials.
+* Rewrites encryption key URIs (`/api/v1/hls/{camera_code}/enc.key`) to allow standard HTML5 / `Hls.js` browser playback with GPU hardware acceleration.
+
+### 6.2 On-Demand Real-Time Frame Inference
+```http
+POST /api/v1/detections/scan-image HTTP/1.1
+Content-Type: multipart/form-data
+
+[file: captured_frame.jpg]
+[camera_id: 1]
+```
+**Response:** Runs YOLOv8 vehicle detection + OCR plate recognition on the exact video frame, cross-referencing the plate against the active criminal hotlist and logging forensic spatial coordinates.
+
