@@ -1,0 +1,5 @@
+file 'D:/sentinel-ai-surveillance/submission_package/precise_rec_temp/seg1_dashboard.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/precise_rec_temp/seg2_cameras.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/precise_rec_temp/seg3_hotlist.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/precise_rec_temp/seg4_gis.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/precise_rec_temp/seg5_watchlist_cameras.mp3'

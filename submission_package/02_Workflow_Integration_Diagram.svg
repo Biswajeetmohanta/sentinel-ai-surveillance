@@ -1,0 +1,349 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" height="100%" style="background-color: #0b0f19; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+    <linearGradient id="blueCyan" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2563eb" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    <linearGradient id="purplePink" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#7c3aed" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="emeraldTeal" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="100%" stop-color="#10b981" />
+    </linearGradient>
+    <linearGradient id="amberOrange" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </linearGradient>
+
+    <!-- Filters -->
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+
+    <!-- Markers -->
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#38bdf8" />
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#34d399" />
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#f87171" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="url(#bgGlow)" />
+
+  <!-- HEADER -->
+  <g transform="translate(60, 35)">
+    <rect x="0" y="0" width="48" height="48" rx="10" fill="url(#purplePink)" />
+    <path d="M 14 24 L 22 32 L 34 16" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    
+    <text x="64" y="26" fill="#ffffff" font-size="24" font-weight="700">SENTINEL AI: END-TO-END WORKFLOW &amp; INTEGRATION PIPELINE</text>
+    <text x="64" y="44" fill="#94a3b8" font-size="13">Detailed Sequence of Real-Time Video Ingestion, AI ANPR Inference, Watchlist Rule Engine &amp; GIS Tracking</text>
+
+    <rect x="1310" y="8" width="170" height="32" rx="16" fill="#1e1b4b" stroke="#6366f1" stroke-width="1"/>
+    <text x="1395" y="29" text-anchor="middle" fill="#a5b4fc" font-size="12" font-weight="600">END-TO-END FLOW</text>
+  </g>
+
+  <!-- ================= TOP PIPELINE: 5 SEQUENTIAL STAGES ================= -->
+
+  <!-- STAGE 1: INGESTION -->
+  <g transform="translate(60, 110)">
+    <rect width="270" height="380" rx="14" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="270" height="40" rx="14" fill="#1e293b"/>
+    <rect y="24" width="270" height="16" fill="#1e293b"/>
+    <circle cx="20" cy="20" r="6" fill="#06b6d4"/>
+    <text x="36" y="25" fill="#f1f5f9" font-size="13" font-weight="700">STAGE 1: STREAM CAPTURE</text>
+
+    <!-- Sub boxes -->
+    <g transform="translate(16, 56)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">1.1 RTSP Ingestion</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Multi-threaded OpenCV &amp; FFmpeg</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Reconnection watchdog + backoff</text>
+    </g>
+
+    <g transform="translate(16, 126)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">1.2 MediaMTX Multiplexer</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">WebRTC / HLS streaming proxy</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Sub-200ms latency stream output</text>
+    </g>
+
+    <g transform="translate(16, 196)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">1.3 Adaptive Frame Throttler</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Motion-triggered &amp; rate limiter</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Drops redundant duplicate frames</text>
+    </g>
+
+    <g transform="translate(16, 266)">
+      <rect width="238" height="95" rx="8" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">Data Output Payload:</text>
+      <text x="12" y="42" fill="#94a3b8" font-family="monospace" font-size="10">• frame_id: UUID</text>
+      <text x="12" y="58" fill="#94a3b8" font-family="monospace" font-size="10">• camera_id: "CAM-AHM-04"</text>
+      <text x="12" y="74" fill="#94a3b8" font-family="monospace" font-size="10">• timestamp: 1725091200</text>
+      <text x="12" y="88" fill="#94a3b8" font-family="monospace" font-size="10">• bgr_matrix: np.ndarray</text>
+    </g>
+  </g>
+
+  <!-- ARROW 1 -> 2 -->
+  <path d="M 330 300 L 360 300" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- STAGE 2: AI ANPR ENGINE -->
+  <g transform="translate(360, 110)">
+    <rect width="280" height="380" rx="14" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="280" height="40" rx="14" fill="#1e293b"/>
+    <rect y="24" width="280" height="16" fill="#1e293b"/>
+    <circle cx="20" cy="20" r="6" fill="#a855f7"/>
+    <text x="36" y="25" fill="#f1f5f9" font-size="13" font-weight="700">STAGE 2: AI ANPR INFERENCE</text>
+
+    <!-- Sub boxes -->
+    <g transform="translate(16, 56)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#4c1d95"/>
+      <text x="12" y="22" fill="#c084fc" font-size="11" font-weight="600">2.1 YOLOv8 Detection</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Vehicle + License Plate Bounding Boxes</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Confidence threshold: &gt; 0.45</text>
+    </g>
+
+    <g transform="translate(16, 126)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#c084fc" font-size="11" font-weight="600">2.2 Crop &amp; CLAHE Enhancement</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Bilinear resize + CLAHE normalization</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Corrects night glare and shadows</text>
+    </g>
+
+    <g transform="translate(16, 196)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#4c1d95"/>
+      <text x="12" y="22" fill="#c084fc" font-size="11" font-weight="600">2.3 PaddleOCR (PP-OCRv4)</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Character text recognition engine</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">High accuracy on Indian fonts &amp; HSRP</text>
+    </g>
+
+    <g transform="translate(16, 266)">
+      <rect width="248" height="95" rx="8" fill="#0f172a" stroke="#7c3aed" stroke-width="1"/>
+      <text x="12" y="22" fill="#c084fc" font-size="11" font-weight="600">Inference Result Payload:</text>
+      <text x="12" y="42" fill="#94a3b8" font-family="monospace" font-size="10">• raw_plate: "GJ01AB1234"</text>
+      <text x="12" y="58" fill="#94a3b8" font-family="monospace" font-size="10">• vehicle_type: "SUV / Car"</text>
+      <text x="12" y="74" fill="#94a3b8" font-family="monospace" font-size="10">• ocr_confidence: 0.94</text>
+      <text x="12" y="88" fill="#94a3b8" font-family="monospace" font-size="10">• crop_thumbnail: "/crops/..."</text>
+    </g>
+  </g>
+
+  <!-- ARROW 2 -> 3 -->
+  <path d="M 640 300 L 670 300" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- STAGE 3: VALIDATION & WATCHLIST -->
+  <g transform="translate(670, 110)">
+    <rect width="280" height="380" rx="14" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="280" height="40" rx="14" fill="#1e293b"/>
+    <rect y="24" width="280" height="16" fill="#1e293b"/>
+    <circle cx="20" cy="20" r="6" fill="#f59e0b"/>
+    <text x="36" y="25" fill="#f1f5f9" font-size="13" font-weight="700">STAGE 3: DISAMBIGUATION &amp; RULES</text>
+
+    <!-- Sub boxes -->
+    <g transform="translate(16, 56)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#fbbf24" font-size="11" font-weight="600">3.1 Indian LP Regex Validator</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">State code &amp; RTO series verification</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Heuristic char repair (8↔B, 0↔O, 1↔I)</text>
+    </g>
+
+    <g transform="translate(16, 126)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#991b1b"/>
+      <text x="12" y="22" fill="#f87171" font-size="11" font-weight="600">3.2 Redis Hotlist Lookup</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">&lt; 1ms In-memory watchlist match</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Stolen, Wanted, Revoked, Suspect</text>
+    </g>
+
+    <g transform="translate(16, 196)">
+      <rect width="248" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#fbbf24" font-size="11" font-weight="600">3.3 Hotlist Flag Decision</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Matches FIR / Alert Category</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Generates priority event</text>
+    </g>
+
+    <g transform="translate(16, 266)">
+      <rect width="248" height="95" rx="8" fill="#0f172a" stroke="#d97706" stroke-width="1"/>
+      <text x="12" y="22" fill="#fbbf24" font-size="11" font-weight="600">Decision State:</text>
+      <text x="12" y="42" fill="#94a3b8" font-family="monospace" font-size="10">• is_watchlist: TRUE</text>
+      <text x="12" y="58" fill="#94a3b8" font-family="monospace" font-size="10">• severity: "CRITICAL"</text>
+      <text x="12" y="74" fill="#94a3b8" font-family="monospace" font-size="10">• fir_number: "FIR-2026-9081"</text>
+      <text x="12" y="88" fill="#94a3b8" font-family="monospace" font-size="10">• offense: "Stolen Vehicle"</text>
+    </g>
+  </g>
+
+  <!-- ARROW 3 -> 4 -->
+  <path d="M 950 300 L 980 300" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- STAGE 4: PERSISTENCE & GIS -->
+  <g transform="translate(980, 110)">
+    <rect width="270" height="380" rx="14" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="270" height="40" rx="14" fill="#1e293b"/>
+    <rect y="24" width="270" height="16" fill="#1e293b"/>
+    <circle cx="20" cy="20" r="6" fill="#10b981"/>
+    <text x="36" y="25" fill="#f1f5f9" font-size="13" font-weight="700">STAGE 4: SPATIAL STORAGE</text>
+
+    <!-- Sub boxes -->
+    <g transform="translate(16, 56)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#065f46"/>
+      <text x="12" y="22" fill="#34d399" font-size="11" font-weight="600">4.1 PostGIS Insertion</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Spatially indexed record write</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Coordinates ST_Point(lat, lng)</text>
+    </g>
+
+    <g transform="translate(16, 126)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#34d399" font-size="11" font-weight="600">4.2 Trajectory Node Linking</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Appends point to vehicle journey</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Delta-T and distance calculations</text>
+    </g>
+
+    <g transform="translate(16, 196)">
+      <rect width="238" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#34d399" font-size="11" font-weight="600">4.3 Speed Estimation</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Calculates km/h between cameras</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Flags overspeed / unusual routes</text>
+    </g>
+
+    <g transform="translate(16, 266)">
+      <rect width="238" height="95" rx="8" fill="#0f172a" stroke="#059669" stroke-width="1"/>
+      <text x="12" y="22" fill="#34d399" font-size="11" font-weight="600">Database Record:</text>
+      <text x="12" y="42" fill="#94a3b8" font-family="monospace" font-size="10">• geom: POINT(72.5714 23.0225)</text>
+      <text x="12" y="58" fill="#94a3b8" font-family="monospace" font-size="10">• speed_est: "54.2 km/h"</text>
+      <text x="12" y="74" fill="#94a3b8" font-family="monospace" font-size="10">• previous_cam: "CAM-AHM-02"</text>
+      <text x="12" y="88" fill="#94a3b8" font-family="monospace" font-size="10">• transit_sec: 142s</text>
+    </g>
+  </g>
+
+  <!-- ARROW 4 -> 5 -->
+  <path d="M 1250 300 L 1280 300" stroke="#38bdf8" stroke-width="2.5" marker-end="url(#arrow)" fill="none"/>
+
+  <!-- STAGE 5: OPERATOR & UI BROADCAST -->
+  <g transform="translate(1280, 110)">
+    <rect width="260" height="380" rx="14" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="260" height="40" rx="14" fill="#1e293b"/>
+    <rect y="24" width="260" height="16" fill="#1e293b"/>
+    <circle cx="20" cy="20" r="6" fill="#ef4444"/>
+    <text x="36" y="25" fill="#f1f5f9" font-size="13" font-weight="700">STAGE 5: OPERATOR ACTION</text>
+
+    <!-- Sub boxes -->
+    <g transform="translate(16, 56)">
+      <rect width="228" height="60" rx="8" fill="#1e293b" stroke="#991b1b"/>
+      <text x="12" y="22" fill="#f87171" font-size="11" font-weight="600">5.1 WebSocket Alert Push</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">&lt; 50ms Real-time broadcast</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Audio chime + visual banner</text>
+    </g>
+
+    <g transform="translate(16, 126)">
+      <rect width="228" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">5.2 GIS Breadcrumb Render</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Dynamic polyline trail animation</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Pulsing red marker on active camera</text>
+    </g>
+
+    <g transform="translate(16, 196)">
+      <rect width="228" height="60" rx="8" fill="#1e293b" stroke="#334155"/>
+      <text x="12" y="22" fill="#38bdf8" font-size="11" font-weight="600">5.3 Live Stream Pop-Up</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Instant RTSP/WebRTC view</text>
+      <text x="12" y="50" fill="#64748b" font-size="9">Shows live feed of current camera</text>
+    </g>
+
+    <g transform="translate(16, 266)">
+      <rect width="228" height="95" rx="8" fill="#0f172a" stroke="#ef4444" stroke-width="1"/>
+      <text x="12" y="22" fill="#f87171" font-size="11" font-weight="600">Operator Action:</text>
+      <text x="12" y="42" fill="#94a3b8" font-size="10">• 1-Click Acknowledge</text>
+      <text x="12" y="58" fill="#94a3b8" font-size="10">• Dispatch PCR Intercept</text>
+      <text x="12" y="74" fill="#94a3b8" font-size="10">• Export PDF Dossier</text>
+      <text x="12" y="88" fill="#94a3b8" font-size="10">• Log Forensic Notes</text>
+    </g>
+  </g>
+
+  <!-- ================= BOTTOM SECTION: INTEGRATION TIMELINE & LATENCY BUDGET ================= -->
+  <g transform="translate(60, 520)">
+    <rect width="1480" height="420" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="1480" height="44" rx="16" fill="#1e293b"/>
+    <rect y="28" width="1480" height="16" fill="#1e293b"/>
+    <text x="24" y="28" fill="#f1f5f9" font-size="15" font-weight="700">SUB-SECOND LATENCY BUDGET &amp; PROTOCOL INTEGRATION MATRIX</text>
+
+    <!-- Latency Timeline Bars -->
+    <g transform="translate(30, 65)">
+      <text x="0" y="20" fill="#94a3b8" font-size="12" font-weight="600">Processing Latency Breakdown (Total Glass-to-Alert: &lt; 420 ms)</text>
+
+      <!-- Bar Container -->
+      <g transform="translate(0, 35)">
+        <!-- Bar 1: Ingestion -->
+        <rect x="0" y="0" width="220" height="36" rx="6" fill="#0284c7"/>
+        <text x="110" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">1. Frame Grab (40ms)</text>
+
+        <!-- Bar 2: YOLOv8 -->
+        <rect x="225" y="0" width="340" height="36" rx="6" fill="#7c3aed"/>
+        <text x="395" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">2. YOLOv8 Detection (85ms)</text>
+
+        <!-- Bar 3: PaddleOCR -->
+        <rect x="570" y="0" width="360" height="36" rx="6" fill="#9333ea"/>
+        <text x="750" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">3. PaddleOCR PP-OCRv4 (110ms)</text>
+
+        <!-- Bar 4: Regex & Redis -->
+        <rect x="935" y="0" width="180" height="36" rx="6" fill="#d97706"/>
+        <text x="1025" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">4. Redis Match (5ms)</text>
+
+        <!-- Bar 5: PostGIS & WS -->
+        <rect x="1120" y="0" width="300" height="36" rx="6" fill="#059669"/>
+        <text x="1270" y="22" text-anchor="middle" fill="#ffffff" font-size="11" font-weight="700">5. PostGIS + WebSocket (30ms)</text>
+      </g>
+    </g>
+
+    <!-- Integration Protocols & APIs Table -->
+    <g transform="translate(30, 160)">
+      <!-- Col 1 -->
+      <g transform="translate(0, 0)">
+        <rect width="450" height="180" rx="10" fill="#0f172a" stroke="#1e293b"/>
+        <text x="16" y="28" fill="#38bdf8" font-size="13" font-weight="700">📹 Edge &amp; Streaming Protocols</text>
+        
+        <text x="16" y="58" fill="#cbd5e1" font-size="11">• <tspan fill="#38bdf8" font-weight="600">RTSP / RTP / RTCP:</tspan> H.264/H.265 video stream ingest</text>
+        <text x="16" y="82" fill="#cbd5e1" font-size="11">• <tspan fill="#38bdf8" font-weight="600">ONVIF Profile S/G/T:</tspan> Camera discovery &amp; PTZ control</text>
+        <text x="16" y="106" fill="#cbd5e1" font-size="11">• <tspan fill="#38bdf8" font-weight="600">WebRTC (WHEP):</tspan> Ultra-low latency dashboard player</text>
+        <text x="16" y="130" fill="#cbd5e1" font-size="11">• <tspan fill="#38bdf8" font-weight="600">LL-HLS:</tspan> Fallback adaptive multi-camera grid streaming</text>
+        <text x="16" y="154" fill="#cbd5e1" font-size="11">• <tspan fill="#38bdf8" font-weight="600">MediaMTX API:</tspan> Dynamic path registration &amp; stream stats</text>
+      </g>
+
+      <!-- Col 2 -->
+      <g transform="translate(485, 0)">
+        <rect width="450" height="180" rx="10" fill="#0f172a" stroke="#1e293b"/>
+        <text x="16" y="28" fill="#a855f7" font-size="13" font-weight="700">⚡ Backend API &amp; Inter-Service Bus</text>
+
+        <text x="16" y="58" fill="#cbd5e1" font-size="11">• <tspan fill="#c084fc" font-weight="600">FastAPI REST Endpoints:</tspan> /api/v1/cameras, /alerts, /search</text>
+        <text x="16" y="82" fill="#cbd5e1" font-size="11">• <tspan fill="#c084fc" font-weight="600">WebSocket /ws/alerts:</tspan> Real-time JSON push stream</text>
+        <text x="16" y="106" fill="#cbd5e1" font-size="11">• <tspan fill="#c084fc" font-weight="600">Redis Pub/Sub Channel:</tspan> `channel:hotlist_alerts`</text>
+        <text x="16" y="130" fill="#cbd5e1" font-size="11">• <tspan fill="#c084fc" font-weight="600">PostGIS Spatial Queries:</tspan> ST_DWithin, ST_MakeLine</text>
+        <text x="16" y="154" fill="#cbd5e1" font-size="11">• <tspan fill="#c084fc" font-weight="600">CORS &amp; Auth:</tspan> JWT Bearer Tokens &amp; SDC subnet filters</text>
+      </g>
+
+      <!-- Col 3 -->
+      <g transform="translate(970, 0)">
+        <rect width="450" height="180" rx="10" fill="#0f172a" stroke="#1e293b"/>
+        <text x="16" y="28" fill="#34d399" font-size="13" font-weight="700">🛡️ Police &amp; External Integrations</text>
+
+        <text x="16" y="58" fill="#cbd5e1" font-size="11">• <tspan fill="#34d399" font-weight="600">CCTNS Hotlist Sync:</tspan> CSV/JSON automated FIR ingestion</text>
+        <text x="16" y="82" fill="#cbd5e1" font-size="11">• <tspan fill="#34d399" font-weight="600">Vahan / Sarathi Schema:</tspan> Standardized vehicle attributes</text>
+        <text x="16" y="106" fill="#cbd5e1" font-size="11">• <tspan fill="#34d399" font-weight="600">PCR Dispatch Webhook:</tspan> SMS / Telegram / Dial 112 event dispatch</text>
+        <text x="16" y="130" fill="#cbd5e1" font-size="11">• <tspan fill="#34d399" font-weight="600">Forensic PDF Exporter:</tspan> Chain-of-custody certified reports</text>
+        <text x="16" y="154" fill="#cbd5e1" font-size="11">• <tspan fill="#34d399" font-weight="600">Air-Gapped Operation:</tspan> Zero outbound internet requirements</text>
+      </g>
+    </g>
+
+    <!-- Footer Note -->
+    <text x="740" y="390" text-anchor="middle" fill="#64748b" font-size="11">Total End-to-End Processing &amp; Display Pipeline Latency Benchmark: 270ms (Edge GPU) / 420ms (Intel i7 CPU)</text>
+  </g>
+</svg>

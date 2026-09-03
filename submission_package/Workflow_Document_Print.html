@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Sentinel AI Surveillance - Workflow & Integration Specification</title>
+  <style>
+    @page { size: A4 portrait; margin: 18mm 18mm 18mm 18mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background: #ffffff; color: #1e293b; line-height: 1.6; font-size: 13px; }
+    
+    .cover-page { height: 95vh; display: flex; flex-direction: column; justify-content: space-between; page-break-after: always; padding: 40px 0; }
+    .badge { display: inline-block; padding: 6px 14px; border-radius: 20px; background: #fdf4ff; color: #9333ea; font-weight: 700; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px; }
+    .doc-title { font-size: 34px; font-weight: 900; color: #0f172a; line-height: 1.2; margin-bottom: 12px; }
+    .doc-subtitle { font-size: 18px; color: #9333ea; font-weight: 600; margin-bottom: 24px; }
+    .meta-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; margin-top: 30px; }
+    .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 12px; }
+    
+    h1 { font-size: 20px; font-weight: 800; color: #0f172a; margin: 30px 0 12px 0; border-bottom: 2px solid #9333ea; padding-bottom: 6px; }
+    h2 { font-size: 16px; font-weight: 700; color: #1e293b; margin: 20px 0 8px 0; }
+    p { margin-bottom: 12px; color: #334155; }
+    
+    .step-box { background: #f8fafc; border: 1px solid #e2e8f0; border-left: 4px solid #9333ea; border-radius: 0 8px 8px 0; padding: 14px; margin-bottom: 14px; }
+    .step-title { font-weight: 700; color: #0f172a; font-size: 14px; margin-bottom: 4px; }
+    
+    table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 12px; }
+    th, td { border: 1px solid #cbd5e1; padding: 10px 12px; text-align: left; }
+    th { background: #0f172a; color: #ffffff; font-weight: 700; }
+    tr:nth-child(even) { background: #f8fafc; }
+    
+    .json-block { background: #0f172a; color: #38bdf8; font-family: monospace; font-size: 11px; padding: 12px; border-radius: 8px; margin: 12px 0; white-space: pre-wrap; }
+    .page-break { page-break-after: always; }
+  </style>
+</head>
+<body>
+
+  <!-- COVER PAGE -->
+  <div class="cover-page">
+    <div>
+      <span class="badge">Workflow &amp; Integration Specification</span>
+      <div class="doc-title">SENTINEL AI SURVEILLANCE PLATFORM</div>
+      <div class="doc-subtitle">End-to-End Operational Pipeline &amp; Police Integration Interfaces</div>
+      <p style="font-size: 14px; color: #64748b; max-width: 600px;">
+        Detailed sequence diagrams, glass-to-alert latency budgets, WebSocket event schemas, PostGIS spatial queries, and CCTNS hotlist sync specifications.
+      </p>
+    </div>
+
+    <div class="meta-box">
+      <div class="meta-grid">
+        <div><span>Document Code:</span><br><strong>SENTINEL-INT-v1.0</strong></div>
+        <div><span>Pipeline Latency:</span><br><strong>&lt; 400ms Glass-to-Alert</strong></div>
+        <div><span>Target Agency:</span><br><strong>Gujarat Police Command Center</strong></div>
+        <div><span>Message Broker:</span><br><strong>Redis Pub/Sub + WebSockets</strong></div>
+      </div>
+    </div>
+
+    <div style="font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 12px;">
+      CONFIDENTIAL &amp; PROPRIETARY • GUJARAT POLICE SURVEILLANCE INITIATIVE
+    </div>
+  </div>
+
+  <!-- SECTION 1 -->
+  <h1>1. 5-Stage Sequential Operational Pipeline</h1>
+
+  <div class="step-box">
+    <div class="step-title">Stage 1: Camera Ingestion &amp; Motion Sampling (0 – 40ms)</div>
+    <p>Camera streams H.264/H.265 video over RTSP. MediaMTX proxies the stream while the adaptive frame grabber samples frames (10 FPS) when motion is detected.</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Stage 2: AI ANPR Detection &amp; OCR (40 – 195ms)</div>
+    <p>YOLOv8 isolates the vehicle and license plate bounding boxes (45ms). CLAHE enhancement sharpens the crop, and PaddleOCR PP-OCRv4 decodes the characters (110ms).</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Stage 3: Indian Syntax Validation &amp; Redis Match (195 – 202ms)</div>
+    <p>Regex disambiguation repairs OCR optical ambiguities. Redis executes an in-memory hash check against active stolen/wanted lists in under 1ms.</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Stage 4: PostGIS Spatial Storage &amp; Speed Calc (202 – 230ms)</div>
+    <p>Coordinates and detection data are stored in PostGIS. The trajectory engine calculates delta-T transit time and average speed from the previous camera node.</p>
+  </div>
+
+  <div class="step-box">
+    <div class="step-title">Stage 5: Real-Time WebSocket Siren Broadcast (230 – 260ms)</div>
+    <p>Async WebSocket emits a JSON alert payload to operator dashboards, triggering the audio siren, red banner, and GIS radar pulse.</p>
+  </div>
+
+  <div class="page-break"></div>
+
+  <!-- SECTION 2 -->
+  <h1>2. Glass-to-Alert Latency Budget</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Pipeline Stage</th>
+        <th>Operation</th>
+        <th>GPU Latency (RTX 4060)</th>
+        <th>CPU Latency (Intel i7)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><b>1. Ingestion</b></td>
+        <td>RTSP Grab &amp; Decode</td>
+        <td>35 ms</td>
+        <td>50 ms</td>
+      </tr>
+      <tr>
+        <td><b>2. YOLOv8</b></td>
+        <td>Vehicle &amp; Plate Localization</td>
+        <td>45 ms</td>
+        <td>90 ms</td>
+      </tr>
+      <tr>
+        <td><b>3. PaddleOCR</b></td>
+        <td>PP-OCRv4 Text Recognition</td>
+        <td>65 ms</td>
+        <td>120 ms</td>
+      </tr>
+      <tr>
+        <td><b>4. Redis Match</b></td>
+        <td>In-Memory Hotlist Check</td>
+        <td>1 ms</td>
+        <td>2 ms</td>
+      </tr>
+      <tr>
+        <td><b>5. PostGIS &amp; WS</b></td>
+        <td>Spatial Write &amp; Alert Push</td>
+        <td>25 ms</td>
+        <td>40 ms</td>
+      </tr>
+      <tr>
+        <td><b>Total End-to-End</b></td>
+        <td><b>Optical Capture to Screen Siren</b></td>
+        <td><b>~171 ms</b></td>
+        <td><b>~302 ms</b></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- SECTION 3 -->
+  <h1>3. WebSocket Live Alert Payload Schema</h1>
+  <div class="json-block">{
+  "event_type": "HOTLIST_ALERT",
+  "timestamp": "2026-08-31T10:45:22.108Z",
+  "camera": {
+    "id": "CAM-AHM-04",
+    "name": "SG Highway - Pakwan Cross Road",
+    "coordinates": { "latitude": 23.0338, "longitude": 72.5074 }
+  },
+  "detection": {
+    "license_plate": "GJ01AB1234",
+    "vehicle_class": "SUV (Fortuner)",
+    "ocr_confidence": 0.964,
+    "speed_estimate_kmh": 58.4,
+    "crop_url": "/api/v1/media/crops/GJ01AB1234.jpg"
+  },
+  "hotlist_match": {
+    "severity": "CRITICAL",
+    "category": "STOLEN_VEHICLE",
+    "fir_number": "FIR-2026-9081",
+    "police_station": "Vastrapur PS, Ahmedabad"
+  }
+}</div>
+
+  <!-- SECTION 4 -->
+  <h1>4. External Police Integrations</h1>
+  <p><b>CCTNS Integration:</b> Automated nightly CSV/JSON sync or real-time webhook ingestion for active FIR stolen vehicle lists.</p>
+  <p><b>PCR Intercept Dispatch:</b> Webhook dispatches GPS coordinates and fleeing heading to the nearest mobile patrol unit.</p>
+</body>
+</html>

@@ -1,0 +1,5 @@
+file 'D:/sentinel-ai-surveillance/submission_package/live_rec_temp/part1_overview.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/live_rec_temp/part2_cameras.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/live_rec_temp/part3_hotlist.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/live_rec_temp/part4_gis.mp3'
+file 'D:/sentinel-ai-surveillance/submission_package/live_rec_temp/part5_watchlist_conclusion.mp3'

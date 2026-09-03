@@ -1,0 +1,520 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" width="100%" height="100%" style="background-color: #0b0f19; font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="bgGlow" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a" />
+      <stop offset="50%" stop-color="#0b0f19" />
+      <stop offset="100%" stop-color="#030712" />
+    </linearGradient>
+    <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06b6d4" />
+      <stop offset="100%" stop-color="#3b82f6" />
+    </linearGradient>
+    <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8b5cf6" />
+      <stop offset="100%" stop-color="#ec4899" />
+    </linearGradient>
+    <linearGradient id="amberGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#f59e0b" />
+      <stop offset="100%" stop-color="#ef4444" />
+    </linearGradient>
+    <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#06b6d4" />
+    </linearGradient>
+    
+    <!-- Filter Shadows -->
+    <filter id="cardShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="8" stdDeviation="12" flood-color="#000000" flood-opacity="0.6"/>
+    </filter>
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#06b6d4" flood-opacity="0.5"/>
+    </filter>
+    
+    <!-- Markers -->
+    <marker id="arrowCyan" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#06b6d4" />
+    </marker>
+    <marker id="arrowPurple" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#a855f7" />
+    </marker>
+    <marker id="arrowEmerald" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M 0 0 L 8 4 L 0 8 Z" fill="#10b981" />
+    </marker>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1600" height="1000" fill="url(#bgGlow)" />
+  
+  <!-- Subtle Grid Pattern -->
+  <g opacity="0.05" stroke="#ffffff" stroke-width="1">
+    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+      <path d="M 40 0 L 0 0 0 40" fill="none" />
+    </pattern>
+    <rect width="1600" height="1000" fill="url(#grid)" />
+  </g>
+
+  <!-- HEADER -->
+  <g transform="translate(60, 40)">
+    <rect x="0" y="0" width="48" height="48" rx="10" fill="url(#cyanGrad)" />
+    <path d="M 24 10 L 36 16 L 36 28 C 36 34 24 40 24 40 C 24 40 12 34 12 28 L 12 16 Z" fill="none" stroke="#ffffff" stroke-width="2.5" />
+    <circle cx="24" cy="24" r="4" fill="#ffffff" />
+    
+    <text x="64" y="26" fill="#ffffff" font-size="24" font-weight="700" letter-spacing="0.5">SENTINEL AI SURVEILLANCE PLATFORM</text>
+    <text x="64" y="44" fill="#94a3b8" font-size="13" font-weight="400">High-Level System Architecture &amp; Component Interaction Topology (100% Self-Hosted / Zero-Cloud)</text>
+    
+    <!-- Status Badge -->
+    <rect x="1330" y="8" width="150" height="32" rx="16" fill="#0f2942" stroke="#0284c7" stroke-width="1"/>
+    <circle cx="1348" cy="24" r="4" fill="#10b981" />
+    <text x="1360" y="29" fill="#38bdf8" font-size="12" font-weight="600">PRODUCTION READY</text>
+  </g>
+
+  <!-- ================= LAYER 1: VIDEO INGESTION & EDGE GATEWAY ================= -->
+  <g transform="translate(60, 110)">
+    <rect width="280" height="820" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Section Header -->
+    <rect width="280" height="46" rx="16" fill="#1e293b" />
+    <rect y="30" width="280" height="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="6" fill="#38bdf8" />
+    <text x="40" y="28" fill="#f1f5f9" font-size="14" font-weight="700">1. CAMERA INGESTION</text>
+
+    <!-- Sub-cards -->
+    <!-- Card 1: Multi-Vendor Cameras -->
+    <g transform="translate(16, 60)">
+      <rect width="248" height="180" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="26" fill="#38bdf8" font-size="13" font-weight="600">Multi-Vendor CCTV Streams</text>
+      <text x="16" y="44" fill="#94a3b8" font-size="11">RTSP / ONVIF Protocols</text>
+      
+      <g transform="translate(16, 56)">
+        <rect width="100" height="24" rx="4" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+        <text x="10" y="16" fill="#e2e8f0" font-size="10">📹 Hikvision</text>
+        
+        <rect x="110" width="100" height="24" rx="4" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+        <text x="120" y="16" fill="#e2e8f0" font-size="10">📹 Dahua</text>
+
+        <rect y="32" width="100" height="24" rx="4" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+        <text x="10" y="48" fill="#e2e8f0" font-size="10">📹 CP Plus</text>
+
+        <rect x="110" y="32" width="100" height="24" rx="4" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+        <text x="120" y="48" fill="#e2e8f0" font-size="10">📹 Axis / Bosch</text>
+
+        <rect y="64" width="210" height="24" rx="4" fill="#0f172a" stroke="#475569" stroke-width="0.5"/>
+        <text x="10" y="80" fill="#e2e8f0" font-size="10">📼 City NVR / DVR Matrix</text>
+      </g>
+
+      <path d="M 16 160 L 232 160" stroke="#334155" stroke-dasharray="3 3"/>
+      <text x="16" y="172" fill="#64748b" font-size="10">H.264 / H.265 Encoded Feeds</text>
+    </g>
+
+    <!-- Card 2: MediaMTX Gateway -->
+    <g transform="translate(16, 260)">
+      <rect width="248" height="210" rx="12" fill="#1e293b" stroke="#0284c7" stroke-width="1.2" />
+      <text x="16" y="26" fill="#38bdf8" font-size="13" font-weight="600">MediaMTX Streaming Gateway</text>
+      <text x="16" y="44" fill="#94a3b8" font-size="11">RTSP Multiplexer &amp; Web Transmuxer</text>
+
+      <g transform="translate(16, 60)">
+        <rect width="216" height="34" rx="6" fill="#0f172a" stroke="#1e293b"/>
+        <text x="12" y="21" fill="#38bdf8" font-size="11" font-weight="600">RTSP Stream Fanout</text>
+        
+        <rect y="44" width="216" height="34" rx="6" fill="#0f172a" stroke="#1e293b"/>
+        <text x="12" y="65" fill="#a855f7" font-size="11" font-weight="600">WebRTC / HLS Transmuxer</text>
+
+        <rect y="88" width="216" height="34" rx="6" fill="#0f172a" stroke="#1e293b"/>
+        <text x="12" y="109" fill="#10b981" font-size="11" font-weight="600">Low-Latency Ring Buffer</text>
+      </g>
+
+      <text x="16" y="196" fill="#0284c7" font-size="10" font-weight="500">&lt; 150ms Glass-to-Glass Latency</text>
+    </g>
+
+    <!-- Card 3: Camera Health Monitor -->
+    <g transform="translate(16, 490)">
+      <rect width="248" height="150" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="26" fill="#38bdf8" font-size="13" font-weight="600">Camera Health Daemon</text>
+      <text x="16" y="44" fill="#94a3b8" font-size="11">Auto-reconnect &amp; Heartbeat</text>
+
+      <rect x="16" y="58" width="216" height="28" rx="6" fill="#0f172a"/>
+      <text x="26" y="76" fill="#94a3b8" font-size="11">Ping &amp; RTSP Socket Probe</text>
+
+      <rect x="16" y="94" width="216" height="28" rx="6" fill="#0f172a"/>
+      <text x="26" y="112" fill="#94a3b8" font-size="11">FPS Drop &amp; Occlusion Detection</text>
+    </g>
+
+    <!-- Layer Footer -->
+    <text x="140" y="795" text-anchor="middle" fill="#64748b" font-size="11">Air-Gapped SDC Network Ready</text>
+  </g>
+
+  <!-- ================= LAYER 2: AI & ANPR PIPELINE ================= -->
+  <g transform="translate(370, 110)">
+    <rect width="320" height="820" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Header -->
+    <rect width="320" height="46" rx="16" fill="#1e293b" />
+    <rect y="30" width="320" height="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="6" fill="#a855f7" />
+    <text x="40" y="28" fill="#f1f5f9" font-size="14" font-weight="700">2. AI VISION &amp; ANPR ENGINE</text>
+
+    <!-- AI Step 1: Frame Sampler -->
+    <g transform="translate(16, 60)">
+      <rect width="288" height="95" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#c084fc" font-size="13" font-weight="600">Adaptive Frame Grabber</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Dynamic FPS sampling (5-15 FPS) + Queue</text>
+      <rect x="16" y="52" width="256" height="26" rx="4" fill="#0f172a"/>
+      <text x="26" y="69" fill="#e2e8f0" font-size="10">Decoded OpenCV BGR Matrix Buffer</text>
+    </g>
+
+    <!-- AI Step 2: YOLOv8 -->
+    <g transform="translate(16, 170)">
+      <rect width="288" height="145" rx="12" fill="#1e293b" stroke="#9333ea" stroke-width="1.2" />
+      <text x="16" y="24" fill="#c084fc" font-size="13" font-weight="600">YOLOv8 Detection Engine</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Dual-Head Neural Network</text>
+      
+      <rect x="16" y="54" width="256" height="32" rx="6" fill="#0f172a" stroke="#2e1065"/>
+      <text x="26" y="74" fill="#e879f9" font-size="11" font-weight="600">Head 1: Vehicle Bounding Box &amp; Class</text>
+      <text x="26" y="86" fill="#94a3b8" font-size="9">(Car, Bike, Truck, Bus, Auto-Rickshaw)</text>
+
+      <rect x="16" y="94" width="256" height="32" rx="6" fill="#0f172a" stroke="#2e1065"/>
+      <text x="26" y="114" fill="#e879f9" font-size="11" font-weight="600">Head 2: License Plate Localization</text>
+    </g>
+
+    <!-- AI Step 3: Image Preprocessing -->
+    <g transform="translate(16, 330)">
+      <rect width="288" height="125" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#c084fc" font-size="13" font-weight="600">Plate Crop &amp; Enhancement</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Computer Vision Optimization</text>
+
+      <g transform="translate(16, 52)">
+        <rect width="122" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="17" fill="#cbd5e1" font-size="10">Perspective Deskew</text>
+
+        <rect x="130" width="126" height="26" rx="4" fill="#0f172a"/>
+        <text x="138" y="17" fill="#cbd5e1" font-size="10">CLAHE Contrast</text>
+
+        <rect y="32" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="49" fill="#cbd5e1" font-size="10">Bilateral Denoise &amp; Sharpening</text>
+      </g>
+    </g>
+
+    <!-- AI Step 4: PaddleOCR -->
+    <g transform="translate(16, 470)">
+      <rect width="288" height="145" rx="12" fill="#1e293b" stroke="#9333ea" stroke-width="1.2" />
+      <text x="16" y="24" fill="#c084fc" font-size="13" font-weight="600">PaddleOCR (PP-OCRv4 Engine)</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Fine-tuned for Indian Standard Fonts</text>
+
+      <rect x="16" y="54" width="256" height="32" rx="6" fill="#0f172a"/>
+      <text x="26" y="74" fill="#e2e8f0" font-size="11">2-Line &amp; High-Security (HSRP) Plates</text>
+
+      <rect x="16" y="94" width="256" height="32" rx="6" fill="#0f172a"/>
+      <text x="26" y="114" fill="#e2e8f0" font-size="11">Commercial &amp; Green EV Plate Schemes</text>
+    </g>
+
+    <!-- AI Step 5: Indian Regex Validator -->
+    <g transform="translate(16, 630)">
+      <rect width="288" height="120" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#c084fc" font-size="13" font-weight="600">Syntax &amp; Optical Disambiguation</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Heuristic Regex Matcher</text>
+
+      <rect x="16" y="54" width="256" height="48" rx="6" fill="#0f172a"/>
+      <text x="26" y="72" fill="#34d399" font-family="monospace" font-size="10">Regex: ^[A-Z]{2}[0-9]{1,2}[A-Z]{0,3}[0-9]{4}$</text>
+      <text x="26" y="90" fill="#94a3b8" font-size="10">O-0, I-1, B-8 Confusion Correction</text>
+    </g>
+
+    <!-- Layer Footer -->
+    <text x="160" y="795" text-anchor="middle" fill="#64748b" font-size="11">Sub-100ms Pure Local Inference</text>
+  </g>
+
+  <!-- ================= LAYER 3: CORE BACKEND & PROCESSING ================= -->
+  <g transform="translate(720, 110)">
+    <rect width="320" height="820" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Header -->
+    <rect width="320" height="46" rx="16" fill="#1e293b" />
+    <rect y="30" width="320" height="16" fill="#1e293b" />
+    <circle cx="24" cy="23" r="6" fill="#f59e0b" />
+    <text x="40" y="28" fill="#f1f5f9" font-size="14" font-weight="700">3. BACKEND SERVICES</text>
+
+    <!-- Card 1: FastAPI Async Engine -->
+    <g transform="translate(16, 60)">
+      <rect width="288" height="170" rx="12" fill="#1e293b" stroke="#d97706" stroke-width="1.2" />
+      <text x="16" y="24" fill="#fbbf24" font-size="13" font-weight="600">FastAPI Async Application Core</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">High-Throughput ASGI Microservice</text>
+
+      <g transform="translate(16, 52)">
+        <rect width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="17" fill="#e2e8f0" font-size="10">📡 RESTful API Gateway (OpenAPI/Swagger)</text>
+
+        <rect y="32" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="49" fill="#e2e8f0" font-size="10">⚡ Async WebSocket Event Dispatcher</text>
+
+        <rect y="64" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="81" fill="#e2e8f0" font-size="10">🔒 JWT &amp; Role-Based Access Control</text>
+      </g>
+    </g>
+
+    <!-- Card 2: Hotlist Matcher -->
+    <g transform="translate(16, 245)">
+      <rect width="288" height="145" rx="12" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
+      <text x="16" y="24" fill="#f87171" font-size="13" font-weight="600">Sub-Second Watchlist Matcher</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Instant Stolen / Suspect Flagging</text>
+
+      <rect x="16" y="52" width="256" height="36" rx="6" fill="#0f172a" stroke="#7f1d1d"/>
+      <text x="26" y="74" fill="#fca5a5" font-size="11" font-weight="600">Redis In-Memory Hotlist Index</text>
+      <text x="26" y="86" fill="#94a3b8" font-size="9">&lt; 2ms exact &amp; fuzzy Levenshtein match</text>
+
+      <rect x="16" y="96" width="256" height="32" rx="6" fill="#0f172a"/>
+      <text x="26" y="116" fill="#fca5a5" font-size="10">Broadcast Priority: HIGH / CRITICAL</text>
+    </g>
+
+    <!-- Card 3: GIS Synthesis Engine -->
+    <g transform="translate(16, 405)">
+      <rect width="288" height="155" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#fbbf24" font-size="13" font-weight="600">GIS Trajectory Reconstructor</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Spatial Chronology &amp; Speed Analysis</text>
+
+      <g transform="translate(16, 52)">
+        <rect width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="17" fill="#cbd5e1" font-size="10">🗺️ Breadcrumb Polyline Generation</text>
+
+        <rect y="32" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="49" fill="#cbd5e1" font-size="10">⏱️ Multi-Camera Speed Estimation</text>
+
+        <rect y="64" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="81" fill="#cbd5e1" font-size="10">🔍 Time-Window Spatial Clustering</text>
+      </g>
+    </g>
+
+    <!-- Card 4: Background Workers -->
+    <g transform="translate(16, 575)">
+      <rect width="288" height="180" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="16" y="24" fill="#fbbf24" font-size="13" font-weight="600">Async Task Executors</text>
+      <text x="16" y="42" fill="#94a3b8" font-size="11">Background ingestion &amp; cleanup</text>
+
+      <g transform="translate(16, 52)">
+        <rect width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="17" fill="#cbd5e1" font-size="10">Thumbnail Crop Saver &amp; Archiver</text>
+
+        <rect y="32" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="49" fill="#cbd5e1" font-size="10">Audit Log &amp; Operator Action Trace</text>
+
+        <rect y="64" width="256" height="26" rx="4" fill="#0f172a"/>
+        <text x="10" y="81" fill="#cbd5e1" font-size="10">Automated Data Retention Daemon</text>
+      </g>
+    </g>
+
+    <!-- Layer Footer -->
+    <text x="160" y="795" text-anchor="middle" fill="#64748b" font-size="11">Async Non-blocking Concurrency</text>
+  </g>
+
+  <!-- ================= LAYER 4: PERSISTENCE & DATA LAYER ================= -->
+  <g transform="translate(1070, 110)">
+    <rect width="210" height="820" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Header -->
+    <rect width="210" height="46" rx="16" fill="#1e293b" />
+    <rect y="30" width="210" height="16" fill="#1e293b" />
+    <circle cx="20" cy="23" r="6" fill="#10b981" />
+    <text x="36" y="28" fill="#f1f5f9" font-size="13" font-weight="700">4. STORAGE &amp; CACHE</text>
+
+    <!-- Card 1: Redis Cache -->
+    <g transform="translate(14, 60)">
+      <rect width="182" height="220" rx="12" fill="#1e293b" stroke="#059669" stroke-width="1.2" />
+      <text x="12" y="24" fill="#34d399" font-size="12" font-weight="600">Redis In-Memory</text>
+      <text x="12" y="40" fill="#94a3b8" font-size="10">Pub/Sub &amp; Hotlist</text>
+
+      <g transform="translate(10, 52)">
+        <rect width="162" height="34" rx="4" fill="#0f172a"/>
+        <text x="8" y="21" fill="#6ee7b7" font-size="10">⚡ Hotlist Key-Value</text>
+
+        <rect y="42" width="162" height="34" rx="4" fill="#0f172a"/>
+        <text x="8" y="63" fill="#6ee7b7" font-size="10">📢 Alert Pub/Sub Bus</text>
+
+        <rect y="84" width="162" height="34" rx="4" fill="#0f172a"/>
+        <text x="8" y="105" fill="#6ee7b7" font-size="10">📊 Stream State Cache</text>
+
+        <rect y="126" width="162" height="24" rx="4" fill="#0f172a"/>
+        <text x="8" y="142" fill="#64748b" font-size="9">&lt; 1ms Read Latency</text>
+      </g>
+    </g>
+
+    <!-- Card 2: PostgreSQL / PostGIS / SQLite -->
+    <g transform="translate(14, 295)">
+      <rect width="182" height="330" rx="12" fill="#1e293b" stroke="#059669" stroke-width="1.2" />
+      <text x="12" y="24" fill="#34d399" font-size="12" font-weight="600">PostgreSQL + PostGIS</text>
+      <text x="12" y="40" fill="#94a3b8" font-size="10">Spatial Database</text>
+
+      <g transform="translate(10, 52)">
+        <rect width="162" height="44" rx="4" fill="#0f172a"/>
+        <text x="8" y="18" fill="#e2e8f0" font-size="10" font-weight="600">Detections Table</text>
+        <text x="8" y="34" fill="#94a3b8" font-size="9">Plate, Confidence, BBox</text>
+
+        <rect y="50" width="162" height="44" rx="4" fill="#0f172a"/>
+        <text x="8" y="68" fill="#e2e8f0" font-size="10" font-weight="600">Camera Nodes (GIS)</text>
+        <text x="8" y="84" fill="#94a3b8" font-size="9">Point(Lat, Long), Zone</text>
+
+        <rect y="100" width="162" height="44" rx="4" fill="#0f172a"/>
+        <text x="8" y="118" fill="#e2e8f0" font-size="10" font-weight="600">Watchlist Index</text>
+        <text x="8" y="134" fill="#94a3b8" font-size="9">FIR, Reason, Priority</text>
+
+        <rect y="150" width="162" height="44" rx="4" fill="#0f172a"/>
+        <text x="8" y="168" fill="#e2e8f0" font-size="10" font-weight="600">Alerts Archive</text>
+        <text x="8" y="184" fill="#94a3b8" font-size="9">Acknowledged &amp; Status</text>
+
+        <rect y="200" width="162" height="44" rx="4" fill="#0f172a"/>
+        <text x="8" y="218" fill="#e2e8f0" font-size="10" font-weight="600">Audit Logs</text>
+        <text x="8" y="234" fill="#94a3b8" font-size="9">User activity &amp; exports</text>
+      </g>
+    </g>
+
+    <!-- Card 3: Storage -->
+    <g transform="translate(14, 640)">
+      <rect width="182" height="115" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="12" y="22" fill="#34d399" font-size="11" font-weight="600">Local Disk Storage</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="9">Air-Gapped SDC Storage</text>
+      
+      <rect x="10" y="48" width="162" height="26" rx="4" fill="#0f172a"/>
+      <text x="18" y="65" fill="#cbd5e1" font-size="9">📁 Crops &amp; Thumbnails</text>
+      
+      <rect x="10" y="80" width="162" height="26" rx="4" fill="#0f172a"/>
+      <text x="18" y="97" fill="#cbd5e1" font-size="9">📁 Video Clips (Event)</text>
+    </g>
+
+    <!-- Layer Footer -->
+    <text x="105" y="795" text-anchor="middle" fill="#64748b" font-size="11">ACID &amp; Spatial Indexed</text>
+  </g>
+
+  <!-- ================= LAYER 5: COMMAND CENTER WEB UI ================= -->
+  <g transform="translate(1310, 110)">
+    <rect width="230" height="820" rx="16" fill="#111827" stroke="#1e293b" stroke-width="1.5" filter="url(#cardShadow)" />
+    
+    <!-- Header -->
+    <rect width="230" height="46" rx="16" fill="#1e293b" />
+    <rect y="30" width="230" height="16" fill="#1e293b" />
+    <circle cx="20" cy="23" r="6" fill="#06b6d4" />
+    <text x="36" y="28" fill="#f1f5f9" font-size="13" font-weight="700">5. COMMAND DASHBOARD</text>
+
+    <!-- UI Module 1 -->
+    <g transform="translate(14, 60)">
+      <rect width="202" height="120" rx="12" fill="#1e293b" stroke="#0891b2" stroke-width="1.2" />
+      <text x="12" y="22" fill="#22d3ee" font-size="12" font-weight="600">Interactive GIS Map</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Leaflet + OpenStreetMap</text>
+      
+      <g transform="translate(10, 48)">
+        <rect width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="17" fill="#e2e8f0" font-size="9">🗺️ Breadcrumb Trails</text>
+
+        <rect y="32" width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="49" fill="#e2e8f0" font-size="9">🔴 Live Camera Clusters</text>
+      </g>
+    </g>
+
+    <!-- UI Module 2 -->
+    <g transform="translate(14, 190)">
+      <rect width="202" height="120" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="12" y="22" fill="#22d3ee" font-size="12" font-weight="600">Live Video Matrix Grid</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">WebRTC / HLS Player</text>
+
+      <g transform="translate(10, 48)">
+        <rect width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="17" fill="#e2e8f0" font-size="9">📺 1/4/9/16 Multi-View</text>
+
+        <rect y="32" width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="49" fill="#e2e8f0" font-size="9">🎯 On-Screen BBox Overlay</text>
+      </g>
+    </g>
+
+    <!-- UI Module 3 -->
+    <g transform="translate(14, 320)">
+      <rect width="202" height="120" rx="12" fill="#1e293b" stroke="#ef4444" stroke-width="1.2" />
+      <text x="12" y="22" fill="#f87171" font-size="12" font-weight="600">Instant Alert Panel</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">WebSocket Push Feed</text>
+
+      <g transform="translate(10, 48)">
+        <rect width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="17" fill="#fca5a5" font-size="9">🚨 Audio &amp; Visual Flashing</text>
+
+        <rect y="32" width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="49" fill="#fca5a5" font-size="9">📋 1-Click Acknowledge / Action</text>
+      </g>
+    </g>
+
+    <!-- UI Module 4 -->
+    <g transform="translate(14, 450)">
+      <rect width="202" height="120" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="12" y="22" fill="#22d3ee" font-size="12" font-weight="600">Vehicle Journey Replay</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Search &amp; Forensic Tool</text>
+
+      <g transform="translate(10, 48)">
+        <rect width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="17" fill="#e2e8f0" font-size="9">🔎 License Plate Lookup</text>
+
+        <rect y="32" width="182" height="26" rx="4" fill="#0f172a"/>
+        <text x="8" y="49" fill="#e2e8f0" font-size="9">⏱️ Timeline Playback</text>
+      </g>
+    </g>
+
+    <!-- UI Module 5 -->
+    <g transform="translate(14, 580)">
+      <rect width="202" height="175" rx="12" fill="#1e293b" stroke="#334155" stroke-width="1" />
+      <text x="12" y="22" fill="#22d3ee" font-size="12" font-weight="600">Admin &amp; Operations</text>
+      <text x="12" y="38" fill="#94a3b8" font-size="10">Control &amp; Watchlist Hub</text>
+
+      <g transform="translate(10, 48)">
+        <rect width="182" height="24" rx="4" fill="#0f172a"/>
+        <text x="8" y="16" fill="#cbd5e1" font-size="9">⚙️ Camera Registration</text>
+
+        <rect y="30" width="182" height="24" rx="4" fill="#0f172a"/>
+        <text x="8" y="46" fill="#cbd5e1" font-size="9">📋 Watchlist / FIR Import</text>
+
+        <rect y="60" width="182" height="24" rx="4" fill="#0f172a"/>
+        <text x="8" y="76" fill="#cbd5e1" font-size="9">📊 Analytics &amp; Reports</text>
+
+        <rect y="90" width="182" height="24" rx="4" fill="#0f172a"/>
+        <text x="8" y="106" fill="#cbd5e1" font-size="9">🔐 User &amp; Audit Logs</text>
+      </g>
+    </g>
+
+    <!-- Layer Footer -->
+    <text x="115" y="795" text-anchor="middle" fill="#64748b" font-size="11">React.js + Tailwind UI</text>
+  </g>
+
+  <!-- ================= CONNECTING ARROWS & DATA FLOWS ================= -->
+  <!-- Layer 1 -> Layer 2 -->
+  <path d="M 340 260 L 370 260" stroke="#06b6d4" stroke-width="2.5" marker-end="url(#arrowCyan)" fill="none" />
+  <path d="M 340 400 L 370 400" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4 4" marker-end="url(#arrowCyan)" fill="none" />
+
+  <!-- Layer 2 -> Layer 3 -->
+  <path d="M 690 320 L 720 320" stroke="#a855f7" stroke-width="2.5" marker-end="url(#arrowPurple)" fill="none" />
+  <path d="M 690 690 L 720 690" stroke="#a855f7" stroke-width="2" marker-end="url(#arrowPurple)" fill="none" />
+
+  <!-- Layer 3 <-> Layer 4 -->
+  <path d="M 1040 240 L 1070 240" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrowEmerald)" fill="none" />
+  <path d="M 1040 460 L 1070 460" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrowEmerald)" fill="none" />
+  <path d="M 1070 500 L 1040 500" stroke="#10b981" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+
+  <!-- Layer 3 -> Layer 5 (WebSocket & REST) -->
+  <path d="M 1040 200 C 1170 200, 1180 200, 1310 200" stroke="#06b6d4" stroke-width="2" stroke-dasharray="4 4" fill="none" />
+  <path d="M 1040 380 C 1170 380, 1180 380, 1310 380" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrowCyan)" fill="none" />
+  
+  <!-- MediaMTX directly to UI (WebRTC Video Stream) -->
+  <path d="M 340 370 C 600 970, 1100 970, 1410 310" stroke="#38bdf8" stroke-width="1.8" stroke-dasharray="6 6" fill="none" opacity="0.4"/>
+  <rect x="750" y="945" width="280" height="24" rx="12" fill="#0f172a" stroke="#0284c7" stroke-width="1"/>
+  <text x="890" y="961" text-anchor="middle" fill="#38bdf8" font-size="10" font-weight="600">WebRTC / HLS Low-Latency Stream Feed to UI</text>
+
+  <!-- KEY / LEGEND -->
+  <g transform="translate(60, 940)">
+    <rect width="600" height="34" rx="8" fill="#111827" stroke="#1e293b" />
+    <text x="16" y="21" fill="#94a3b8" font-size="11" font-weight="600">LEGEND:</text>
+    
+    <circle cx="90" cy="17" r="5" fill="#06b6d4" />
+    <text x="102" y="21" fill="#cbd5e1" font-size="11">RTSP/WebRTC Video</text>
+
+    <circle cx="240" cy="17" r="5" fill="#a855f7" />
+    <text x="252" y="21" fill="#cbd5e1" font-size="11">AI Metadata</text>
+
+    <circle cx="350" cy="17" r="5" fill="#ef4444" />
+    <text x="362" y="21" fill="#cbd5e1" font-size="11">Hotlist Alert Event</text>
+
+    <circle cx="490" cy="17" r="5" fill="#10b981" />
+    <text x="502" y="21" fill="#cbd5e1" font-size="11">PostGIS / Spatial Query</text>
+  </g>
+</svg>

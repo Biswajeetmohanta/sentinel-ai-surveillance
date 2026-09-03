@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentinel AI Surveillance Platform — Executive Solution Presentation</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #131d31;
+      --card-border: #1e293b;
+      --accent-cyan: #06b6d4;
+      --accent-blue: #3b82f6;
+      --accent-purple: #a855f7;
+      --accent-green: #10b981;
+      --accent-red: #ef4444;
+      --accent-amber: #f59e0b;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); overflow: hidden; height: 100vh; width: 100vw; }
+
+    /* Presentation Container */
+    #presentation { width: 100vw; height: 100vh; position: relative; overflow: hidden; }
+
+    .slide {
+      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      padding: 50px 80px; display: flex; flex-direction: column; justify-content: space-between;
+      opacity: 0; pointer-events: none; transform: scale(0.96) translateX(40px);
+      transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .slide.active {
+      opacity: 1; pointer-events: auto; transform: scale(1) translateX(0); z-index: 10;
+    }
+
+    /* Header */
+    .slide-header { margin-bottom: 24px; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px;
+      border-radius: 20px; background: rgba(6, 182, 212, 0.12); color: var(--accent-cyan);
+      font-weight: 700; font-size: 12px; letter-spacing: 0.8px; text-transform: uppercase;
+      border: 1px solid rgba(6, 182, 212, 0.25); margin-bottom: 10px;
+    }
+    .slide-title { font-size: 34px; font-weight: 800; color: #ffffff; letter-spacing: -0.5px; }
+    .slide-subtitle { color: var(--text-muted); font-size: 15px; margin-top: 4px; }
+
+    /* Grid Layouts */
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; flex: 1; align-items: stretch; }
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px; flex: 1; align-items: stretch; }
+    .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; flex: 1; align-items: stretch; }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg); border: 1px solid var(--card-border);
+      border-radius: 16px; padding: 24px; display: flex; flex-direction: column;
+      position: relative; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+      transition: border-color 0.3s, transform 0.3s;
+    }
+    .card:hover { border-color: rgba(6, 182, 212, 0.4); transform: translateY(-2px); }
+    .card-glow-cyan { border-top: 3px solid var(--accent-cyan); }
+    .card-glow-purple { border-top: 3px solid var(--accent-purple); }
+    .card-glow-green { border-top: 3px solid var(--accent-green); }
+    .card-glow-red { border-top: 3px solid var(--accent-red); }
+    .card-glow-amber { border-top: 3px solid var(--accent-amber); }
+
+    .card-icon { font-size: 28px; margin-bottom: 12px; }
+    .card-title { font-size: 18px; font-weight: 700; color: #ffffff; margin-bottom: 6px; }
+    .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.5; }
+
+    .feature-list { list-style: none; display: flex; flex-direction: column; gap: 10px; margin-top: auto; }
+    .feature-item {
+      display: flex; align-items: flex-start; gap: 8px; font-size: 13px; color: #cbd5e1;
+      line-height: 1.4; background: rgba(15, 23, 42, 0.6); padding: 8px 12px; border-radius: 8px;
+    }
+    .feature-item strong { color: #f1f5f9; }
+    .bullet { color: var(--accent-cyan); font-weight: bold; }
+
+    /* Visual Interactive Simulation on Slide 1 / Slide 4 */
+    .sim-box {
+      background: #090d16; border: 1px solid #1e293b; border-radius: 12px;
+      padding: 16px; display: flex; flex-direction: column; gap: 12px;
+    }
+    .sim-header { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
+    .radar-scan {
+      position: relative; width: 100%; height: 160px; background: #030712; border-radius: 8px;
+      overflow: hidden; border: 1px solid #1e293b; display: flex; align-items: center; justify-content: center;
+    }
+    .radar-line {
+      position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+      background: linear-gradient(90deg, transparent, #06b6d4, transparent);
+      box-shadow: 0 0 12px #06b6d4; animation: scan 2s linear infinite;
+    }
+    @keyframes scan { 0% { top: 0; } 100% { top: 100%; } }
+
+    .plate-badge {
+      font-family: 'Consolas', monospace; font-size: 22px; font-weight: 800;
+      background: #facc15; color: #000; padding: 6px 16px; border-radius: 6px;
+      border: 2px solid #000; letter-spacing: 2px; display: inline-flex; align-items: center; gap: 8px;
+    }
+    .alert-banner {
+      background: rgba(239, 68, 68, 0.15); border: 1px solid #ef4444; border-radius: 8px;
+      padding: 10px 14px; display: flex; align-items: center; justify-content: space-between;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+
+    /* Footer & Controls */
+    .slide-footer {
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid #1e293b; padding-top: 16px; margin-top: 16px;
+    }
+    .footer-text { font-size: 12px; color: #64748b; }
+    
+    .nav-controls {
+      position: fixed; bottom: 20px; right: 40px; z-index: 100;
+      display: flex; align-items: center; gap: 12px; background: rgba(19, 29, 49, 0.85);
+      backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 30px; border: 1px solid #334155;
+    }
+    .nav-btn {
+      background: #0f172a; border: 1px solid #334155; color: #fff; width: 36px; height: 36px;
+      border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: 0.2s; font-weight: bold;
+    }
+    .nav-btn:hover { background: var(--accent-cyan); color: #000; border-color: var(--accent-cyan); }
+    .slide-counter { font-size: 13px; font-weight: 700; color: #94a3b8; min-width: 50px; text-align: center; }
+
+    /* Progress bar */
+    .progress-container { position: fixed; top: 0; left: 0; width: 100%; height: 4px; background: rgba(255,255,255,0.05); z-index: 100; }
+    .progress-bar { height: 100%; background: linear-gradient(90deg, #06b6d4, #a855f7); width: 12.5%; transition: width 0.3s; }
+
+    /* Quick jump pill */
+    .top-actions {
+      position: fixed; top: 16px; right: 40px; z-index: 100; display: flex; gap: 10px;
+    }
+    .top-btn {
+      background: rgba(19, 29, 49, 0.9); border: 1px solid #334155; color: #38bdf8;
+      padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      cursor: pointer; text-decoration: none; display: flex; align-items: center; gap: 6px;
+    }
+    .top-btn:hover { background: #0284c7; color: #fff; }
+  </style>
+</head>
+<body>
+
+  <div class="progress-container" style="display:none;"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="top-actions" style="display:none;">
+    <a href="01_Sentinel_AI_Solution_Presentation.pdf" target="_blank" class="top-btn">📄 Open Presentation PDF</a>
+    <a href="index.html" class="top-btn">📂 File Hub</a>
+    <button onclick="toggleFullscreen()" class="top-btn">⛶ Fullscreen</button>
+  </div>
+
+  <div id="presentation">
+
+    <!-- ================= SLIDE 1: TITLE ================= -->
+    <div class="slide " id="slide1">
+      <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; max-width: 900px;">
+        <div class="badge">🛡️ GUJARAT POLICE SMART SURVEILLANCE</div>
+        <h1 style="font-size: 48px; font-weight: 900; line-height: 1.15; margin-bottom: 16px; color: #ffffff;">
+          SENTINEL AI SURVEILLANCE PLATFORM
+        </h1>
+        <h2 style="font-size: 22px; color: var(--accent-cyan); font-weight: 600; margin-bottom: 24px;">
+          Unified CCTV Ingestion, AI ANPR &amp; GIS Vehicle Tracking System
+        </h2>
+        <p style="font-size: 16px; color: var(--text-muted); line-height: 1.6; margin-bottom: 36px;">
+          An enterprise-grade, 100% self-hosted computer vision intelligence system. Integrates multi-vendor cameras, executes sub-second hotlist alerts, and reconstructs vehicle journeys on interactive GIS maps with <b>zero cloud API costs</b>.
+        </p>
+        <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+          <span style="background: #1e293b; padding: 8px 16px; border-radius: 8px; font-size: 13px; border: 1px solid #334155;">📹 Multi-Vendor RTSP/ONVIF</span>
+          <span style="background: #1e293b; padding: 8px 16px; border-radius: 8px; font-size: 13px; border: 1px solid #334155;">⚡ YOLOv8 + PP-OCRv4</span>
+          <span style="background: #1e293b; padding: 8px 16px; border-radius: 8px; font-size: 13px; border: 1px solid #334155;">🚨 &lt;400ms Hotlist Siren</span>
+          <span style="background: #1e293b; padding: 8px 16px; border-radius: 8px; font-size: 13px; border: 1px solid #334155;">🗺️ PostGIS Breadcrumb Replay</span>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">State Data Centre (SDC) &amp; Air-Gapped Network Compliant</span>
+        <span class="footer-text">Press <b>Space</b> or <b>→</b> to continue</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 2: THE OPERATIONAL CHALLENGE ================= -->
+    <div class="slide" id="slide2">
+      <div class="slide-header">
+        <div class="badge">PROBLEM CONTEXT</div>
+        <div class="slide-title">The Surveillance Challenge Faced by Police Forces</div>
+        <div class="slide-subtitle">Current city surveillance systems suffer from fragmented hardware, slow alerting, and high cloud costs.</div>
+      </div>
+      <div class="grid-3">
+        <div class="card card-glow-red">
+          <div class="card-icon">📹</div>
+          <div class="card-title">Multi-Vendor Silos</div>
+          <div class="card-desc">Cities have thousands of cameras from different brands (Hikvision, Dahua, CP Plus, Axis) running incompatible proprietary VMS software.</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">✖</span> No unified live video matrix</div>
+            <div class="feature-item"><span class="bullet">✖</span> Difficult to add or swap camera brands</div>
+          </div>
+        </div>
+        <div class="card card-glow-amber">
+          <div class="card-icon">🔍</div>
+          <div class="card-title">Complex Indian Plates</div>
+          <div class="card-desc">Standard foreign OCR systems fail miserably on Indian roads due to high font variations, 2-line plates, commercial yellow plates, and dust/glare.</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">✖</span> 40%+ OCR errors on Indian fonts</div>
+            <div class="feature-item"><span class="bullet">✖</span> Night-vision headlight glare failures</div>
+          </div>
+        </div>
+        <div class="card card-glow-red">
+          <div class="card-icon">⏱️</div>
+          <div class="card-title">Delayed Suspect Intercept</div>
+          <div class="card-desc">Stolen vehicles and wanted criminals cross checkpoints unnoticed because manual monitoring cannot check hundreds of streams in real time.</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">✖</span> Hours lost in manual DVR playback</div>
+            <div class="feature-item"><span class="bullet">✖</span> Exorbitant per-camera cloud license fees</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">Operational Bottlenecks in Command Centers</span>
+        <span class="footer-text">Slide 2 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 3: SYSTEM ARCHITECTURE ================= -->
+    <div class="slide" id="slide3">
+      <div class="slide-header">
+        <div class="badge">SYSTEM TOPOLOGY</div>
+        <div class="slide-title">High-Level Architecture &amp; Component Stack</div>
+        <div class="slide-subtitle">Modular 5-tier architecture built for non-blocking asynchronous processing and extreme scalability.</div>
+      </div>
+      <div class="grid-4">
+        <div class="card card-glow-cyan">
+          <div class="card-icon">1️⃣</div>
+          <div class="card-title">Ingestion Tier</div>
+          <div class="card-desc">MediaMTX Edge Streaming Gateway</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> RTSP/ONVIF Ingest</div>
+            <div class="feature-item"><span class="bullet">•</span> WebRTC / LL-HLS Proxy</div>
+            <div class="feature-item"><span class="bullet">•</span> Auto-reconnect watchdog</div>
+          </div>
+        </div>
+        <div class="card card-glow-purple">
+          <div class="card-icon">2️⃣</div>
+          <div class="card-title">AI Vision Pipeline</div>
+          <div class="card-desc">YOLOv8 + PP-OCRv4 Engine</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> Dual-Head Vehicle/Plate</div>
+            <div class="feature-item"><span class="bullet">•</span> CLAHE Contrast Restore</div>
+            <div class="feature-item"><span class="bullet">•</span> Indian LP Syntax Matcher</div>
+          </div>
+        </div>
+        <div class="card card-glow-amber">
+          <div class="card-icon">3️⃣</div>
+          <div class="card-title">Core Backend</div>
+          <div class="card-desc">FastAPI Async &amp; Redis Cache</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> &lt;1ms Hotlist Lookup</div>
+            <div class="feature-item"><span class="bullet">•</span> WebSocket Alert Bus</div>
+            <div class="feature-item"><span class="bullet">•</span> Speed &amp; Delta-T Estimator</div>
+          </div>
+        </div>
+        <div class="card card-glow-green">
+          <div class="card-icon">4️⃣</div>
+          <div class="card-title">Command Dashboard</div>
+          <div class="card-desc">React 18 + Leaflet GIS Map</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> Live Camera Matrix Grid</div>
+            <div class="feature-item"><span class="bullet">•</span> Breadcrumb Route Trail</div>
+            <div class="feature-item"><span class="bullet">•</span> Instant Siren &amp; Toast Alert</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">100% Self-Hosted • Zero Cloud Dependencies</span>
+        <span class="footer-text">Slide 3 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 4: THE AI ANPR PIPELINE ================= -->
+    <div class="slide" id="slide4">
+      <div class="slide-header">
+        <div class="badge">COMPUTER VISION</div>
+        <div class="slide-title">Specialized AI ANPR Pipeline for Indian Conditions</div>
+        <div class="slide-subtitle">Multi-stage pipeline engineered specifically for high accuracy under difficult lighting, angles, and plate formats.</div>
+      </div>
+      <div class="grid-2">
+        <div class="card card-glow-purple">
+          <div class="card-title">⚡ 5-Step Deep Learning Pipeline</div>
+          <div class="card-desc">Executes in under 100ms per frame entirely on local hardware</div>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div><strong>1. Adaptive Sampler:</strong> Motion-triggered frame grabbing throttles to 10 FPS to save compute.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>2. Dual-Head YOLOv8:</strong> Isolates vehicle class (Car, Bike, Truck, Auto) and crops the license plate rectangle.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>3. CLAHE Image Enhancement:</strong> Normalizes night headlight glare, shadow contrast, and perspective deskew.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>4. PaddleOCR (PP-OCRv4):</strong> Character recognition trained on Indian multi-font, HSRP, and 2-line plates.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>5. Regex Validation:</strong> Corrects optical confusions (e.g. 0 vs O, 8 vs B, 1 vs I).</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-glow-green">
+          <div class="card-title">📊 Live Detection Simulation &amp; Benchmarks</div>
+          <div class="card-desc">Validated on real-world Indian highway feeds</div>
+          
+          <div class="sim-box">
+            <div class="sim-header">
+              <span>CAMERA: SG Highway (CAM-04)</span>
+              <span style="color: #10b981;">● INFERENCE: 42ms (GPU)</span>
+            </div>
+            <div class="radar-scan">
+              <div class="radar-line"></div>
+              <div style="text-align: center;">
+                <div class="plate-badge">GJ 01 AB 1234</div>
+                <div style="font-size: 11px; color: #94a3b8; margin-top: 6px;">VEHICLE: WHITE FORTUNER (SUV) • CONFIDENCE: 96.4%</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 12px;">
+            <div style="background: #0f172a; padding: 10px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 22px; font-weight: 800; color: #38bdf8;">97.4%</div>
+              <div style="font-size: 11px; color: #94a3b8;">Detection Accuracy</div>
+            </div>
+            <div style="background: #0f172a; padding: 10px; border-radius: 8px; text-align: center;">
+              <div style="font-size: 22px; font-weight: 800; color: #34d399;">&lt; 45ms</div>
+              <div style="font-size: 11px; color: #94a3b8;">GPU Frame Latency</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">Deep Learning Computer Vision Core</span>
+        <span class="footer-text">Slide 4 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 5: SUB-SECOND HOTLIST ALERTING ================= -->
+    <div class="slide" id="slide5">
+      <div class="slide-header">
+        <div class="badge">REAL-TIME ALERTING</div>
+        <div class="slide-title">Sub-Second Watchlist Matching &amp; Operator Siren</div>
+        <div class="slide-subtitle">Instant broadcast from camera sensor to operator workstation in under 400 milliseconds.</div>
+      </div>
+      <div class="grid-2">
+        <div class="card card-glow-red">
+          <div class="card-title">🚨 Real-Time Hotlist Match Engine</div>
+          <div class="card-desc">Integrates with CCTNS &amp; police stolen vehicle databases</div>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div><strong>Redis In-Memory Key-Value:</strong> Performs hash lookups in &lt;1ms per recognized plate.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Fuzzy Levenshtein Matcher:</strong> Tolerates single-character OCR scratches to catch disguised plates.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Severity Categorization:</strong> Distinguishes CRITICAL (Stolen/Wanted), HIGH (Revoked), and MEDIUM alerts.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Instant Audio Siren:</strong> Loud sound chime and red flashing toaster alerts the operator immediately.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-glow-cyan">
+          <div class="card-title">⚡ Command Center Alert Card Example</div>
+          <div class="card-desc">What the police operator sees in real time:</div>
+          
+          <div class="alert-banner">
+            <div>
+              <div style="font-weight: 800; color: #ef4444; font-size: 14px;">🚨 CRITICAL HOTLIST MATCH</div>
+              <div style="font-size: 12px; color: #fca5a5;">FIR-2026-9081 • STOLEN SUV REPORTED</div>
+            </div>
+            <span style="background: #ef4444; color: #fff; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">&lt; 380ms</span>
+          </div>
+
+          <div style="background: #0f172a; padding: 14px; border-radius: 8px; margin-top: 12px; font-size: 12px; line-height: 1.6;">
+            <div>📍 <b>Location:</b> SG Highway - Pakwan Junction (CAM-04)</div>
+            <div>⏱️ <b>Timestamp:</b> Today at 10:45:22 AM</div>
+            <div>🚘 <b>Vehicle:</b> GJ01AB1234 (White Toyota Fortuner)</div>
+            <div>👮 <b>Police Station:</b> Vastrapur PS, Ahmedabad</div>
+          </div>
+
+          <div style="display: flex; gap: 10px; margin-top: 14px;">
+            <button style="flex: 1; background: #0284c7; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer;">📺 1-Click Live Feed</button>
+            <button style="flex: 1; background: #ef4444; color: #fff; border: none; padding: 10px; border-radius: 6px; font-weight: 700; cursor: pointer;">🚔 Dispatch PCR Van</button>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">WebSocket Async Broadcast Engine</span>
+        <span class="footer-text">Slide 5 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 6: GIS TRACKING & BREADCRUMBS ================= -->
+    <div class="slide" id="slide6" class="slide active">
+      <div class="slide-header">
+        <div class="badge">GIS MAPPING</div>
+        <div class="slide-title">Interactive GIS Map &amp; Breadcrumb Trajectory Replay</div>
+        <div class="slide-subtitle">Reconstruct suspect escape routes with spatial speed estimation and directional polylines.</div>
+      </div>
+      <div class="grid-3">
+        <div class="card card-glow-cyan">
+          <div class="card-icon">🗺️</div>
+          <div class="card-title">Live GIS Overview</div>
+          <div class="card-desc">Interactive Leaflet &amp; OpenStreetMap map displaying all registered city CCTV nodes with live status pins.</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> Green/Red camera health pins</div>
+            <div class="feature-item"><span class="bullet">•</span> Flashing radar alert marker</div>
+            <div class="feature-item"><span class="bullet">•</span> Zero Google Maps licensing fee</div>
+          </div>
+        </div>
+        <div class="card card-glow-purple">
+          <div class="card-icon">📍</div>
+          <div class="card-title">Numbered Breadcrumbs</div>
+          <div class="card-desc">Enter any license plate number to trace the chronological path taken across camera junctions (1 → 2 → 3 → 4).</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> Directional route polylines</div>
+            <div class="feature-item"><span class="bullet">•</span> Speed calculation (km/h)</div>
+            <div class="feature-item"><span class="bullet">•</span> Delta-T transit time between stops</div>
+          </div>
+        </div>
+        <div class="card card-glow-green">
+          <div class="card-icon">📋</div>
+          <div class="card-title">Forensic Dossier</div>
+          <div class="card-desc">Export court-admissible PDF investigation dossiers containing full trajectory history and high-res vehicle crops.</div>
+          <div class="feature-list">
+            <div class="feature-item"><span class="bullet">•</span> 1-Click PDF export</div>
+            <div class="feature-item"><span class="bullet">•</span> Full-frame and plate crops</div>
+            <div class="feature-item"><span class="bullet">•</span> Wildcard search (`GJ01??1234`)</div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">PostGIS Spatial Database Integration</span>
+        <span class="footer-text">Slide 6 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 7: LIVE DASHBOARD FEATURES ================= -->
+    <div class="slide" id="slide7">
+      <div class="slide-header">
+        <div class="badge">COMMAND CENTER</div>
+        <div class="slide-title">Unified Web Command Center Capabilities</div>
+        <div class="slide-subtitle">Modern React 18 interface designed specifically for fast-paced police control room operations.</div>
+      </div>
+      <div class="grid-4">
+        <div class="card">
+          <div class="card-title" style="color: #38bdf8;">📺 Live Multi-Cam Grid</div>
+          <div class="card-desc">1, 4, 9, or 16-channel low-latency WebRTC streams with AI bounding box overlays.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: #f87171;">🚨 Alert History &amp; Logs</div>
+          <div class="card-desc">Real-time alert feed with 1-click acknowledgement and operator audit logs.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: #c084fc;">🔎 Vehicle Search</div>
+          <div class="card-desc">Search by license plate, camera location, vehicle class, and custom date/time windows.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="color: #34d399;">⚙️ Camera &amp; Hotlist Hub</div>
+          <div class="card-desc">Bulk CSV import for CCTNS FIR lists and RTSP camera registration management.</div>
+        </div>
+      </div>
+      <div style="background: #111827; border: 1px solid #1e293b; border-radius: 12px; padding: 18px; margin-top: 20px; display: flex; justify-content: space-around; align-items: center;">
+        <div style="text-align: center;"><span style="font-size: 20px; font-weight: 800; color: #38bdf8;">&lt; 150ms</span><br><span style="font-size: 11px; color: #94a3b8;">WebRTC Stream Latency</span></div>
+        <div style="text-align: center;"><span style="font-size: 20px; font-weight: 800; color: #a855f7;">100% Async</span><br><span style="font-size: 11px; color: #94a3b8;">Non-Blocking ASGI</span></div>
+        <div style="text-align: center;"><span style="font-size: 20px; font-weight: 800; color: #34d399;">Air-Gapped</span><br><span style="font-size: 11px; color: #94a3b8;">Zero External APIs</span></div>
+        <div style="text-align: center;"><span style="font-size: 20px; font-weight: 800; color: #f59e0b;">CI/CD Ready</span><br><span style="font-size: 11px; color: #94a3b8;">GitHub Actions Automated</span></div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">React 18 • Tailwind CSS • Lucide Icons</span>
+        <span class="footer-text">Slide 7 / 8</span>
+      </div>
+    </div>
+
+    <!-- ================= SLIDE 8: SUMMARY & ROI ================= -->
+    <div class="slide" id="slide8">
+      <div class="slide-header">
+        <div class="badge">BUSINESS VALUE &amp; ROI</div>
+        <div class="slide-title">Summary, Operational ROI &amp; Next Steps</div>
+        <div class="slide-subtitle">High operational impact with massive recurring cost savings for government infrastructure.</div>
+      </div>
+      <div class="grid-2">
+        <div class="card card-glow-green">
+          <div class="card-title">💰 Massive Cost &amp; Infrastructure ROI</div>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div><strong>Zero Recurring SaaS Fees:</strong> Eliminates lakhs to crores in annual per-camera licensing fees.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Hardware Reusability:</strong> Unifies existing legacy Hikvision/Dahua/CP Plus cameras without costly upgrades.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>100% Data Sovereignty:</strong> Video footage and criminal records remain strictly inside the State Data Centre.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Rapid Resolution:</strong> Cuts forensic tracking time from several hours down to a few seconds.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card card-glow-cyan">
+          <div class="card-title">🚀 Future Enhancements Roadmap</div>
+          <div class="feature-list">
+            <div class="feature-item">
+              <div><strong>Speed Violation Section Control:</strong> Automated speed enforcement across highway corridors.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Traffic Violation E-Challan:</strong> Helmet, tripling, and red-light jumping detection modules.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Edge AI Boxes:</strong> NVIDIA Jetson deployment for remote highway checkpoints.</div>
+            </div>
+            <div class="feature-item">
+              <div><strong>Inter-District Police Sync:</strong> Real-time hotlist sync across Ahmedabad, Surat, and Rajkot zones.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="slide-footer">
+        <span class="footer-text">Sentinel AI Surveillance Platform</span>
+        <span class="footer-text">Slide 8 / 8</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Navigation Controls -->
+  <div class="nav-controls" style="display:none;">
+    <button class="nav-btn" onclick="prevSlide()">❮</button>
+    <span class="slide-counter" id="counter">1 / 8</span>
+    <button class="nav-btn" onclick="nextSlide()">❯</button>
+  </div>
+
+  <script>
+    let currentSlide = 1;
+    const totalSlides = 8;
+
+    function showSlide(index) {
+      if (index < 1) index = 1;
+      if (index > totalSlides) index = totalSlides;
+      currentSlide = index;
+
+      document.querySelectorAll('.slide').forEach((s, idx) => {
+        s.classList.toggle('active', (idx + 1) === currentSlide);
+      });
+
+      document.getElementById('counter').innerText = `${currentSlide} / ${totalSlides}`;
+      document.getElementById('progressBar').style.width = `${(currentSlide / totalSlides) * 100}%`;
+    }
+
+    function nextSlide() { showSlide(currentSlide + 1); }
+    function prevSlide() { showSlide(currentSlide - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') nextSlide();
+      if (e.key === 'ArrowLeft' || e.key === 'PageUp') prevSlide();
+      if (e.key === 'Home') showSlide(1);
+      if (e.key === 'End') showSlide(totalSlides);
+    });
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+  </script>
+</body>
+</html>
