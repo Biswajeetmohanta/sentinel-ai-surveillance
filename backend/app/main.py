@@ -17,9 +17,39 @@ from app.api import cameras, watchlist, detections, stats, websocket, stream, hl
 from app.api.auth import seed_default_user
 from app.services.stream_manager import stream_manager
 from sqlalchemy.future import select
+from sqlalchemy import text
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 logger = logging.getLogger("sentinel")
+
+async def auto_migrate_sqlite():
+    """Automatically alter existing SQLite tables to add missing columns without dropping data"""
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+        try:
+            res = await conn.execute(text("PRAGMA table_info(cameras)"))
+            cols = [row[1] for row in res.fetchall()]
+            if cols:
+                missing_cols = {
+                    "camera_code": "VARCHAR(50)",
+                    "department": "VARCHAR(100) DEFAULT 'Gujarat Police'",
+                    "camera_type": "VARCHAR(50) DEFAULT 'Fixed Bullet'",
+                    "ownership": "VARCHAR(100) DEFAULT 'Gujarat Police'",
+                    "hls_url": "TEXT",
+                    "webrtc_url": "TEXT",
+                    "stream_type": "VARCHAR(50) DEFAULT 'RTSP'",
+                    "fps_processing": "INTEGER DEFAULT 5",
+                    "coverage_radius_meters": "FLOAT DEFAULT 150.0",
+                    "installation_year": "INTEGER DEFAULT 2023",
+                    "storage_details": "VARCHAR(100) DEFAULT 'NVR 30-Day On-Premise'",
+                    "maintenance_status": "VARCHAR(50) DEFAULT 'Operational'"
+                }
+                for col_name, col_def in missing_cols.items():
+                    if col_name not in cols:
+                        logger.info(f"Auto-migrating cameras table: adding missing column {col_name}...")
+                        await conn.execute(text(f"ALTER TABLE cameras ADD COLUMN {col_name} {col_def}"))
+        except Exception as e:
+            logger.warning(f"Auto-migration note: {e}")
 
 async def seed_initial_data():
     """Seed sample Gujarat Police CCTV camera network & suspect watchlist"""
@@ -143,9 +173,7 @@ async def seed_initial_data():
 async def lifespan(app: FastAPI):
     # Startup
     logger.info("🚀 Initializing Sentinel AI Database and Services...")
-    async with engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
-    
+    await auto_migrate_sqlite()
     await seed_initial_data()
     await seed_default_user()
     await stream_manager.start()
