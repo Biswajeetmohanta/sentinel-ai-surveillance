@@ -1,52 +1,50 @@
 import os
 import subprocess
 import imageio_ffmpeg
-import shutil
 
 SUBMISSION_DIR = r"D:\sentinel-ai-surveillance\submission_package"
 FFMPEG_EXE = imageio_ffmpeg.get_ffmpeg_exe()
 
-# ================= 1. CLEAN SHORT 1-2 LINE SUBTITLE CUES =================
-# Small, concise, natural 3-4 second chunks matching the speech pace
+# ================= CLEAN SHORT 1-2 LINE SUBTITLE CUES =================
+# Small, concise, natural 4-5 second chunks matching the speech pace
 SUBTITLES = [
-    # Segment 1: Dashboard (0:00 - 0:31.8)
-    (0.0, 4.2, "Welcome to the live demonstration of Sentinel AI for Gujarat Police."),
-    (4.2, 8.8, "We begin on the main Surveillance command dashboard."),
-    (8.8, 14.5, "At the top, our KPI stats bar displays live operational counters:"),
-    (14.5, 20.2, "Active city cameras, video streams, daily ANPR detections, and hotlist matches."),
-    (20.2, 26.0, "On the left, live CCTV feeds; on the right, real-time incoming alert feeds."),
-    (26.0, 31.8, "Running 100% on-premises with zero external cloud API costs."),
+    # Segment 1: Officer Authentication & Security (0.0 to 25.34)
+    (0.0, 5.5, "Welcome to the official demonstration of the Sentinel AI Surveillance Platform."),
+    (5.5, 10.8, "Submitted for the Gujarat Police Innovation Challenge 2026."),
+    (10.8, 16.5, "We begin at the secure Officer Authentication Gateway."),
+    (16.5, 21.2, "Every access is secured with Salted SHA-256 encryption and role-based clearance."),
+    (21.2, 25.3, "Authorizing as Superintendent of Police, IT & Cyber, Badge GP-7829."),
 
-    # Segment 2: Cameras (0:31.8 - 1:05.8)
-    (31.8, 37.5, "Here in the Live Camera Grid, we ingest multi-vendor RTSP streams"),
-    (37.5, 43.2, "via our low-latency MediaMTX proxy: Hikvision, Dahua, CP Plus, and Axis."),
-    (43.2, 49.5, "Operators can monitor multiple simultaneous junctions like SG Highway and Ashram Road."),
-    (49.5, 55.2, "Our dual-head YOLOv8 and PaddleOCR pipeline runs continuously on-premises,"),
-    (55.2, 60.5, "detecting vehicles and enhancing plate crops with CLAHE contrast filtering,"),
-    (60.5, 65.8, "reading Indian license plates with over 97% recognition accuracy."),
+    # Segment 2: Statewide Control Room & 30 CCTV Nodes (25.34 to 53.85)
+    (25.3, 31.0, "Here in the main Command Center, Sentinel unifies 30 official Gujarat Police CCTV cameras"),
+    (31.0, 36.8, "across Ahmedabad, Gandhinagar, Surat, and Rajkot into a single interface."),
+    (36.8, 42.5, "The top KPI bar tracks live stream health, daily vehicle scans, and hotlist matches."),
+    (42.5, 48.2, "Operators can seamlessly filter feeds across all 26 state departments,"),
+    (48.2, 53.8, "including Traffic Police, Civil Supplies, and RTO checkpoints."),
 
-    # Segment 3: Hotlist Alert (1:05.8 - 1:41.1)
-    (65.8, 71.0, "Now, a red-flagged vehicle passes the SG Highway checkpoint."),
-    (71.0, 77.2, "In under 400ms, our in-memory Redis hotlist engine detects a critical match"),
-    (77.2, 82.5, "for FIR-2026-9081 — a reported stolen white SUV."),
-    (82.5, 88.0, "The operator receives an instant audio-visual siren on the right sidebar,"),
-    (88.0, 93.5, "displaying plate GJ 01 AB 1234, snapshot crops, and location details."),
-    (93.5, 98.5, "The operator can click Acknowledge to confirm the incident"),
-    (98.5, 101.1, "and immediately alert field PCR patrol units."),
+    # Segment 3: 60 FPS HLS Video & AI ANPR (53.85 to 76.67)
+    (53.8, 59.5, "Clicking on a live node activates our hardware-accelerated HLS video engine,"),
+    (59.5, 65.2, "delivering smooth 60 frames-per-second streaming with browser GPU decoding."),
+    (65.2, 71.0, "Operators can click Scan Frame with AI to trigger on-demand vehicle classification"),
+    (71.0, 76.6, "and high-accuracy OCR license plate recognition directly from the live feed."),
 
-    # Segment 4: GIS & Trajectory (1:41.1 - 2:12.3)
-    (101.1, 106.8, "Next, clicking on Trajectory & GIS opens our spatial tracking module."),
-    (106.8, 112.5, "We enter suspect license plate GJ 01 AB 1234 and click Search."),
-    (112.5, 118.5, "The system queries PostGIS and reconstructs the vehicle's chronological journey."),
-    (118.5, 125.0, "The map draws numbered breadcrumbs from stop 1 to stop 4,"),
-    (125.0, 132.3, "showing directional headings, transit times, and average speeds."),
+    # Segment 4: Watchlist Alerts & Siren (76.67 to 100.91)
+    (76.6, 82.2, "When a suspect vehicle passes any camera, Sentinel's in-memory engine"),
+    (82.2, 88.0, "executes sub-millisecond cross-referencing against active eGujCop and CCTNS FIR databases."),
+    (88.0, 94.2, "The control room receives an instant audio-visual siren with vehicle snapshot,"),
+    (94.2, 100.9, "displaying GPS coordinates, FIR details, and one-click PCR intercept dispatch."),
 
-    # Segment 5: Watchlist & Conclusion (2:12.3 - 2:42.6)
-    (132.3, 138.0, "On the Suspect Hotlist tab, operators manage active FIR records"),
-    (138.0, 143.5, "and perform bulk CSV uploads synchronized with CCTNS."),
-    (143.5, 150.0, "The Cameras tab allows registering new RTSP camera endpoints with GPS coordinates."),
-    (150.0, 157.0, "Sentinel AI is 100% self-hosted, air-gapped compatible, with zero recurring fees."),
-    (157.0, 162.6, "Thank you for watching the Sentinel AI demonstration.")
+    # Segment 5: Trajectory & GIS Vehicle Tracking (100.91 to 122.10)
+    (100.9, 106.5, "In the Trajectory and GIS module, entering a suspect registration number"),
+    (106.5, 111.8, "reconstructs the vehicle's chronological journey across Gujarat junctions."),
+    (111.8, 117.2, "The interactive map renders numbered breadcrumbs from point 1 to point 4"),
+    (117.2, 122.1, "with transit time deltas, heading vectors, and speed estimations for interception."),
+
+    # Segment 6: CCTV Asset Registry & Gap Analysis (122.10 to 148.06)
+    (122.1, 128.0, "Finally, fulfilling Model 1 requirements, our Registry and Gap Analysis module"),
+    (128.0, 134.5, "provides a centralized inventory of all state surveillance assets,"),
+    (134.5, 140.8, "identifying coverage blind spots and aging cameras to scale up to 80,000 cameras."),
+    (140.8, 148.0, "Sentinel AI is 100% self-hosted with zero recurring cloud fees. Thank you.")
 ]
 
 def format_srt_time(seconds_float):
@@ -58,66 +56,60 @@ def format_srt_time(seconds_float):
         milliseconds = 999
     return f"{hours:02d}:{minutes:02d}:{seconds:02d},{milliseconds:03d}"
 
-# 1. Write SRT file
-srt_file = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Demo_Subtitles.srt")
-with open(srt_file, "w", encoding="utf-8") as f:
-    for idx, (start_s, end_s, text) in enumerate(SUBTITLES, 1):
-        f.write(f"{idx}\n")
-        f.write(f"{format_srt_time(start_s)} --> {format_srt_time(end_s)}\n")
-        f.write(f"{text}\n\n")
+def generate_srt():
+    srt_file = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Demo_Subtitles.srt")
+    with open(srt_file, "w", encoding="utf-8") as f:
+        for idx, (start_s, end_s, text) in enumerate(SUBTITLES, 1):
+            f.write(f"{idx}\n")
+            f.write(f"{format_srt_time(start_s)} --> {format_srt_time(end_s)}\n")
+            f.write(f"{text}\n\n")
+    print(f"Created short clean SRT file: {srt_file} ({len(SUBTITLES)} cues)")
+    return srt_file
 
-print(f"Created short clean SRT file: {srt_file}")
+def burn_subtitles(srt_file):
+    input_video = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Live_Screen_Recording_Demo.mp4")
+    output_video = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Demo_With_Subtitles.mp4")
 
-# 2. Source raw clean video & master audio
-raw_video = os.path.join(SUBMISSION_DIR, "precise_rec_temp", "raw_video", "page@427e590189ad8b9fe052559f77ad027f.webm")
-master_audio = os.path.join(SUBMISSION_DIR, "precise_rec_temp", "master_narration.mp3")
-output_video = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Demo_With_Subtitles.mp4")
-primary_video = os.path.join(SUBMISSION_DIR, "Sentinel_AI_Live_Screen_Recording_Demo.mp4")
+    escaped_srt = srt_file.replace("\\", "/").replace(":", "\\:")
+    
+    # Modern styling: Clean font, semi-transparent black background box for high readability
+    sub_style = (
+        "Fontname=Arial,"
+        "Fontsize=20,"
+        "PrimaryColour=&H00FFFFFF,"
+        "BackColour=&H80000000,"
+        "BorderStyle=4,"
+        "Outline=1,"
+        "Shadow=0,"
+        "MarginV=38,"
+        "Alignment=2"
+    )
 
-escaped_srt = srt_file.replace("\\", "/").replace(":", "\\:")
+    cmd = [
+        FFMPEG_EXE,
+        "-y",
+        "-i", input_video,
+        "-vf", f"subtitles='{escaped_srt}':force_style='{sub_style}'",
+        "-c:v", "libx264",
+        "-crf", "20",
+        "-preset", "fast",
+        "-c:a", "copy",
+        output_video
+    ]
 
-# Elegant small subtitle styling:
-# - FontSize=13 (Clean, non-intrusive, 1-2 lines)
-# - Outline=1.2, Shadow=0.5
-# - MarginV=18 (Pinned right at the bottom edge)
-# - Alignment=2 (Bottom Center)
-sub_style = (
-    "Fontname=Arial,"
-    "Fontsize=13,"
-    "PrimaryColour=&H00FFFFFF,"
-    "OutlineColour=&H00000000,"
-    "BorderStyle=1,"
-    "Outline=1.5,"
-    "Shadow=0.8,"
-    "MarginV=18,"
-    "Alignment=2"
-)
+    print(f"Burning subtitles onto: {output_video}...")
+    res = subprocess.run(cmd, capture_output=True, text=True)
+    
+    if os.path.exists(output_video):
+        size_mb = os.path.getsize(output_video) / (1024 * 1024)
+        print("="*65)
+        print("SUCCESS: Subtitled Video Created Successfully!")
+        print(f"Output File: {output_video}")
+        print(f"File Size: {size_mb:.2f} MB")
+        print("="*65)
+    else:
+        print("Error burning subtitles:", res.stderr)
 
-cmd = [
-    FFMPEG_EXE,
-    "-y",
-    "-i", raw_video,
-    "-i", master_audio,
-    "-vf", f"subtitles='{escaped_srt}':force_style='{sub_style}'",
-    "-c:v", "libx264",
-    "-pix_fmt", "yuv420p",
-    "-c:a", "aac",
-    "-b:a", "192k",
-    "-shortest",
-    output_video
-]
-
-print("Rendering clean video with compact subtitles...")
-subprocess.run(cmd, capture_output=True)
-
-if os.path.exists(output_video) and os.path.getsize(output_video) > 1000000:
-    size_mb = os.path.getsize(output_video) / (1024 * 1024)
-    print(f"\n=======================================================")
-    print(f"SUCCESS: Clean Subtitled Video Rendered!")
-    print(f"Path: {output_video}")
-    print(f"Size: {size_mb:.2f} MB")
-    print(f"=======================================================")
-    shutil.copy2(output_video, primary_video)
-    print(f"Updated: {primary_video}")
-else:
-    print("Failed to render video.")
+if __name__ == "__main__":
+    srt = generate_srt()
+    burn_subtitles(srt)

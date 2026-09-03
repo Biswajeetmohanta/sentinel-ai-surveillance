@@ -4,7 +4,6 @@ import asyncio
 import subprocess
 import edge_tts
 import imageio_ffmpeg
-import httpx
 from playwright.async_api import async_playwright
 
 SUBMISSION_DIR = r"D:\sentinel-ai-surveillance\submission_package"
@@ -13,58 +12,60 @@ os.makedirs(TEMP_REC_DIR, exist_ok=True)
 
 FFMPEG_EXE = imageio_ffmpeg.get_ffmpeg_exe()
 VOICE = "en-US-ChristopherNeural"
+TARGET_URL = "https://sentinel.deventtechnology.com"
 
 # ================= EXACT SCRIPT MATCHING ON-SCREEN ACTIONS =================
 SEGMENTS = [
     {
-        "id": "seg1_dashboard",
-        "title": "Surveillance Dashboard & Live Stats",
+        "id": "seg1_auth",
+        "title": "Officer Authentication & Security Gateway",
         "text": (
-            "Welcome to the live demonstration of the Sentinel AI Surveillance Platform for Gujarat Police. "
-            "We begin on the main Surveillance dashboard. At the top, our KPI stats bar displays live operational counters "
-            "for registered city cameras, active video streams, daily ANPR detections, and suspect hotlist matches. "
-            "On the left, we monitor live CCTV camera streams, while the right sidebar displays the real-time alert feed "
-            "as vehicles pass through city checkpoints."
+            "Welcome to the official demonstration of the Sentinel AI Surveillance Platform for Gujarat Police. "
+            "We begin at the Officer Authentication Gateway. Every access is secured with Salted SHA-256 encryption and role-based clearance. "
+            "We log in as the Surveillance Commander, Superintendent of Police, IT and Cyber, Badge number GP-7829."
         )
     },
     {
-        "id": "seg2_cameras",
-        "title": "Live Camera Grid & AI ANPR Detections",
+        "id": "seg2_dashboard",
+        "title": "Statewide Control Room & 30 CCTV Nodes",
         "text": (
-            "Here in the Live Camera Grid, the system ingests multi-vendor RTSP streams from Hikvision, Dahua, CP Plus, and Axis "
-            "via our low-latency MediaMTX proxy. Operators can view multiple simultaneous streams, such as SG Highway and Ashram Road. "
-            "In each feed, our dual-head YOLOv8 and PaddleOCR pipeline runs continuously on-premises, detecting vehicles, "
-            "enhancing plate crops with CLAHE contrast filtering, and reading Indian license plates with over 97 percent accuracy."
+            "Here in the main Command Center, Sentinel unifies 30 official Gujarat Police CCTV cameras across Ahmedabad, Gandhinagar, Surat, and Rajkot into a single operational interface. "
+            "The top KPI bar tracks live stream health, daily vehicle scans, and hotlist matches. "
+            "Operators can seamlessly filter feeds across all 26 state departments, including Traffic Police, Civil Supplies, and RTO."
         )
     },
     {
-        "id": "seg3_hotlist",
-        "title": "Real-Time Hotlist Alert & Siren Trigger",
+        "id": "seg3_streaming_anpr",
+        "title": "60 FPS HLS Video & Real-Time AI ANPR",
         "text": (
-            "Now, a red-flagged vehicle passes the SG Highway checkpoint. In less than 400 milliseconds, our in-memory Redis hotlist engine "
-            "detects a critical match for FIR-2026-9081, a stolen white SUV. The operator immediately receives an audio-visual siren on the right sidebar, "
-            "displaying the vehicle plate GJ 01 AB 1234, high-resolution snapshot crop, and location details. "
-            "The operator can click Acknowledge to confirm the incident and alert field PCR patrol units."
+            "Clicking on a live node, such as Chimanbhai Bridge or Janpath, activates our hardware-accelerated HLS video engine, "
+            "delivering smooth 60 frames-per-second streaming with GPU decoding. "
+            "Operators can click Scan Frame with AI to trigger on-demand vehicle classification and high-accuracy OCR license plate recognition directly from the live feed."
         )
     },
     {
-        "id": "seg4_gis",
-        "title": "Trajectory & GIS Vehicle Tracking",
+        "id": "seg4_hotlist_alerts",
+        "title": "Sub-Second Watchlist Matching & Siren Alerts",
         "text": (
-            "Next, clicking on the Trajectory and GIS tab opens our spatial intelligence module. "
-            "We enter the suspect license plate GJ 01 AB 1234 into the search bar and click Search. "
-            "The system queries PostGIS and reconstructs the vehicle's chronological journey across Ahmedabad junctions. "
-            "The map draws numbered breadcrumbs from stop 1 to stop 4, showing directional heading, transit times, "
-            "and average speeds to assist in suspect interception."
+            "When a suspect vehicle passes any camera, Sentinel's in-memory engine executes sub-millisecond cross-referencing against active eGujCop and CCTNS stolen vehicle FIR databases. "
+            "The control room receives an instant audio-visual siren, displaying the vehicle plate, high-resolution snapshot crop, GPS location, and one-click PCR intercept dispatch."
         )
     },
     {
-        "id": "seg5_watchlist_cameras",
-        "title": "Suspect Hotlist & Camera Setup",
+        "id": "seg5_trajectory_gis",
+        "title": "Chronological GIS Vehicle Trajectory & Route Reconstruction",
         "text": (
-            "Moving to the Suspect Hotlist tab, operators can view all active FIR records, including stolen vehicles and wanted suspects, "
-            "or perform bulk CSV uploads from CCTNS. Finally, the Cameras tab allows registering new RTSP camera endpoints with GPS coordinates. "
-            "Sentinel AI is 100 percent self-hosted, air-gapped network compatible, and operates with zero cloud API costs. Thank you for watching."
+            "In the Trajectory and GIS module, entering a suspect registration number reconstructs the vehicle's chronological journey across Gujarat junctions. "
+            "The interactive map renders numbered breadcrumbs from point 1 to point 4 with transit time deltas, heading vectors, and speed estimations to assist field officers in setting up roadblocks."
+        )
+    },
+    {
+        "id": "seg6_registry_gap",
+        "title": "CCTV Asset Registry & Infrastructure Gap Analysis",
+        "text": (
+            "Finally, fulfilling Model 1 requirements, our Registry and Gap Analysis module provides a centralized inventory of all state surveillance assets, "
+            "identifying coverage blind spots and aging cameras to plan future statewide expansion to 80,000 cameras. "
+            "Sentinel AI is 100 percent self-hosted, air-gapped compliant, and eliminates recurring cloud SaaS fees. Thank you."
         )
     }
 ]
@@ -79,7 +80,7 @@ async def generate_precise_audio():
         
         # Get duration
         res = subprocess.run([FFMPEG_EXE, "-i", a_path], capture_output=True, text=True)
-        dur = 30.0
+        dur = 25.0
         for line in res.stderr.split("\n"):
             if "Duration:" in line:
                 try:
@@ -87,27 +88,17 @@ async def generate_precise_audio():
                     h, m, s = time_str.split(":")
                     dur = float(h)*3600 + float(m)*60 + float(s) + 0.5
                 except Exception:
-                    dur = 30.0
+                    dur = 25.0
                 break
         durations[seg['id']] = dur
         print(f"  -> {seg['id']}: {dur:.2f} seconds")
     return durations
 
-async def trigger_live_alert():
-    """Trigger a hotlist detection so the UI displays the siren and red alert banner"""
-    try:
-        async with httpx.AsyncClient() as client:
-            # First ensure database has detection
-            res = await client.get("http://localhost:8000/api/v1/detections?plate=GJ01AB1234")
-            print(f"Alert check: {res.status_code}")
-    except Exception as e:
-        print(f"Alert trigger: {e}")
-
 async def record_screen(durations):
     video_dir = os.path.join(TEMP_REC_DIR, "raw_video")
     os.makedirs(video_dir, exist_ok=True)
     
-    print("\n--- 2. Starting Synchronized Playwright Screen Recording ---")
+    print("\n--- 2. Starting Synchronized Playwright Screen Recording on Live Site ---")
     async with async_playwright() as p:
         browser = await p.chromium.launch(
             headless=True,
@@ -120,93 +111,144 @@ async def record_screen(durations):
         )
         
         page = await context.new_page()
-        await page.goto("http://localhost:5173", wait_until="networkidle")
-        await asyncio.sleep(2)
+        print(f"Navigating to {TARGET_URL}...", flush=True)
+        await page.goto(TARGET_URL, wait_until="domcontentloaded", timeout=60000)
+        await asyncio.sleep(3)
 
         # -------------------------------------------------------------
-        # SEGMENT 1: Surveillance Dashboard & Live Stats
+        # SEGMENT 1: Officer Authentication & Security Gateway
         # -------------------------------------------------------------
-        dur1 = durations["seg1_dashboard"]
-        print(f"\n[Recording Seg 1: Surveillance Dashboard & Live Stats] ({dur1:.1f}s)")
-        # Move cursor to navbar branding
-        await page.mouse.move(200, 40)
-        await asyncio.sleep(3)
-        # Move cursor across the 4 stats cards
-        await page.mouse.move(300, 120)
-        await asyncio.sleep(3)
-        await page.mouse.move(600, 120)
-        await asyncio.sleep(3)
-        await page.mouse.move(900, 120)
-        await asyncio.sleep(3)
-        await page.mouse.move(1200, 120)
-        await asyncio.sleep(3)
-        # Point to right alert feed
-        await page.mouse.move(1600, 300)
-        await asyncio.sleep(dur1 - 17)
-
-        # -------------------------------------------------------------
-        # SEGMENT 2: Live Camera Grid & AI ANPR Detections
-        # -------------------------------------------------------------
-        dur2 = durations["seg2_cameras"]
-        print(f"\n[Recording Seg 2: Live Camera Grid & AI ANPR] ({dur2:.1f}s)")
-        # Hover over camera 1 (SG Highway)
-        await page.mouse.move(400, 350)
-        await asyncio.sleep(6)
-        # Hover over camera 2 (Ashram Road)
-        await page.mouse.move(1000, 350)
-        await asyncio.sleep(6)
-        # Hover over camera 3 (Sindhu Bhavan)
-        await page.mouse.move(400, 700)
-        await asyncio.sleep(6)
-        # Scroll down slightly to see camera matrix
-        await page.mouse.wheel(0, 200)
-        await asyncio.sleep(dur2 - 20)
-        await page.mouse.wheel(0, -200)
-        await asyncio.sleep(2)
-
-        # -------------------------------------------------------------
-        # SEGMENT 3: Real-Time Hotlist Alert & Siren
-        # -------------------------------------------------------------
-        dur3 = durations["seg3_hotlist"]
-        print(f"\n[Recording Seg 3: Real-Time Hotlist Alert & Siren] ({dur3:.1f}s)")
-        await trigger_live_alert()
-        await asyncio.sleep(2)
-        # Hover over the right alert sidebar
-        await page.mouse.move(1650, 250)
-        await asyncio.sleep(5)
-        # Click on acknowledge button if present on top alert card
+        dur1 = durations["seg1_auth"]
+        print(f"\n[Recording Seg 1: Officer Authentication & Security Gateway] ({dur1:.1f}s)", flush=True)
+        # Check if already logged in or login form visible
         try:
-            ack_btn = page.locator("button:has-text('Acknowledge'), button:has-text('Ack')").first
-            if await ack_btn.is_visible():
-                await ack_btn.hover()
-                await asyncio.sleep(2)
-                await ack_btn.click()
+            await page.wait_for_selector("input[type='email']", timeout=5000)
+            has_login = True
         except Exception:
-            pass
-        await asyncio.sleep(dur3 - 9)
+            has_login = False
+
+        if has_login:
+            print("Found login form, filling officer credentials...", flush=True)
+            login_input = page.locator("input[type='email']")
+            await page.mouse.move(960, 380)
+            await asyncio.sleep(2)
+            await login_input.click()
+            await page.keyboard.type("jyoti@deventtechnology.com", delay=50)
+            await asyncio.sleep(1)
+            
+            pwd_input = page.locator("input[type='password']")
+            await pwd_input.click()
+            await page.keyboard.type("123456", delay=50)
+            await asyncio.sleep(1)
+            
+            submit_btn = page.locator("button[type='submit']")
+            await submit_btn.hover()
+            await asyncio.sleep(1.5)
+            await submit_btn.click()
+            await asyncio.sleep(3)
+        else:
+            await page.mouse.move(960, 540)
+            await asyncio.sleep(5)
+        
+        # Remaining time for seg1
+        rem1 = max(1.0, dur1 - 10.0)
+        await asyncio.sleep(rem1)
 
         # -------------------------------------------------------------
-        # SEGMENT 4: Trajectory & GIS Vehicle Tracking
+        # SEGMENT 2: Statewide Control Room & 30 CCTV Nodes
         # -------------------------------------------------------------
-        dur4 = durations["seg4_gis"]
-        print(f"\n[Recording Seg 4: Trajectory & GIS Vehicle Tracking] ({dur4:.1f}s)")
+        dur2 = durations["seg2_dashboard"]
+        print(f"\n[Recording Seg 2: Statewide Control Room & 30 CCTV Nodes] ({dur2:.1f}s)")
+        # Move cursor to top stats cards
+        await page.mouse.move(200, 110)
+        await asyncio.sleep(3)
+        await page.mouse.move(500, 110)
+        await asyncio.sleep(3)
+        await page.mouse.move(800, 110)
+        await asyncio.sleep(3)
+        await page.mouse.move(1100, 110)
+        await asyncio.sleep(3)
+        
+        # Move down to camera list
+        await page.mouse.move(180, 280)
+        await asyncio.sleep(2)
+        await page.mouse.wheel(0, 180)
+        await asyncio.sleep(3)
+        await page.mouse.wheel(0, -180)
+        await asyncio.sleep(2)
+        
+        rem2 = max(1.0, dur2 - 19.0)
+        await asyncio.sleep(rem2)
+
+        # -------------------------------------------------------------
+        # SEGMENT 3: 60 FPS HLS Video & Real-Time AI ANPR
+        # -------------------------------------------------------------
+        dur3 = durations["seg3_streaming_anpr"]
+        print(f"\n[Recording Seg 3: 60 FPS HLS Video & AI ANPR] ({dur3:.1f}s)")
+        # Click on the first camera feed
+        cam_item = page.locator(".camera-item, div:has-text('Chimanbhai Bridge')").first
+        if await cam_item.is_visible():
+            await cam_item.click()
+            await asyncio.sleep(2)
+        
+        # Hover over the live video player
+        await page.mouse.move(550, 420)
+        await asyncio.sleep(5)
+        
+        # Click or hover on "Scan Frame with AI" button if available
+        scan_btn = page.locator("button:has-text('Scan'), button:has-text('ANPR')").first
+        if await scan_btn.is_visible():
+            await scan_btn.hover()
+            await asyncio.sleep(2)
+            await scan_btn.click()
+            await asyncio.sleep(3)
+        
+        rem3 = max(1.0, dur3 - 12.0)
+        await asyncio.sleep(rem3)
+
+        # -------------------------------------------------------------
+        # SEGMENT 4: Sub-Second Watchlist Matching & Siren Alerts
+        # -------------------------------------------------------------
+        dur4 = durations["seg4_hotlist_alerts"]
+        print(f"\n[Recording Seg 4: Watchlist Alerts & Siren] ({dur4:.1f}s)")
+        # Move mouse to the right alert sidebar
+        await page.mouse.move(1600, 260)
+        await asyncio.sleep(4)
+        await page.mouse.move(1600, 420)
+        await asyncio.sleep(4)
+        
+        # Click on an alert card or acknowledge button if present
+        ack_btn = page.locator("button:has-text('Ack'), button:has-text('Acknowledge')").first
+        if await ack_btn.is_visible():
+            await ack_btn.hover()
+            await asyncio.sleep(2)
+            await ack_btn.click()
+        
+        rem4 = max(1.0, dur4 - 10.0)
+        await asyncio.sleep(rem4)
+
+        # -------------------------------------------------------------
+        # SEGMENT 5: Chronological GIS Vehicle Trajectory
+        # -------------------------------------------------------------
+        dur5 = durations["seg5_trajectory_gis"]
+        print(f"\n[Recording Seg 5: Trajectory & GIS Vehicle Tracking] ({dur5:.1f}s)")
         # Click on 'Trajectory & GIS' navbar tab
         try:
-            traj_tab = page.locator("button:has-text('Trajectory'), button:has-text('GIS'), button:has-text('Tracking')").first
+            traj_tab = page.locator("button:has-text('Trajectory'), button:has-text('GIS')").first
             if await traj_tab.is_visible():
                 await traj_tab.click()
             else:
                 await page.click("nav button:nth-child(2)")
         except Exception:
             pass
-        await asyncio.sleep(4)
+        await asyncio.sleep(3)
         
-        # Focus on Search Input, type GJ01AB1234 and click Search
+        # Focus on search input, type GJ01AB1234
         try:
-            input_box = page.locator("input[placeholder*='GJ'], input[placeholder*='Plate'], input[type='text']").first
+            input_box = page.locator("input[type='text'], input[placeholder*='GJ']").first
             if await input_box.is_visible():
                 await input_box.click()
-                await page.keyboard.type("GJ01AB1234", delay=100)
+                await page.keyboard.type("GJ01AB1234", delay=80)
                 await asyncio.sleep(1)
                 search_btn = page.locator("button:has-text('Search'), button:has-text('Track'), button[type='submit']").first
                 if await search_btn.is_visible():
@@ -215,51 +257,48 @@ async def record_screen(durations):
             pass
         await asyncio.sleep(4)
         
-        # Hover over GIS map route points
-        await page.mouse.move(1000, 500)
+        # Hover over the GIS map and waypoints
+        await page.mouse.move(1000, 480)
         await asyncio.sleep(4)
-        await page.mouse.move(1100, 450)
-        await asyncio.sleep(4)
-        await asyncio.sleep(dur4 - 18)
+        await page.mouse.move(1150, 420)
+        await asyncio.sleep(3)
+        
+        rem5 = max(1.0, dur5 - 15.0)
+        await asyncio.sleep(rem5)
 
         # -------------------------------------------------------------
-        # SEGMENT 5: Suspect Hotlist & Camera Setup
+        # SEGMENT 6: CCTV Asset Registry & Infrastructure Gap Analysis
         # -------------------------------------------------------------
-        dur5 = durations["seg5_watchlist_cameras"]
-        print(f"\n[Recording Seg 5: Suspect Hotlist & Camera Setup] ({dur5:.1f}s)")
-        # Click on 'Suspect Hotlist' tab
+        dur6 = durations["seg6_registry_gap"]
+        print(f"\n[Recording Seg 6: Asset Registry & Gap Analysis] ({dur6:.1f}s)")
+        # Click on 'Registry & Gap Analysis' or 'Cameras'
         try:
-            wl_tab = page.locator("button:has-text('Hotlist'), button:has-text('Watchlist'), button:has-text('Suspect')").first
-            if await wl_tab.is_visible():
-                await wl_tab.click()
-            else:
-                await page.click("nav button:nth-child(3)")
-        except Exception:
-            pass
-        await asyncio.sleep(4)
-        # Scroll through hotlist table
-        await page.mouse.wheel(0, 150)
-        await asyncio.sleep(4)
-        await page.mouse.wheel(0, -150)
-        await asyncio.sleep(2)
-        
-        # Click on 'Cameras' tab
-        try:
-            cam_tab = page.locator("button:has-text('Cameras'), button:has-text('Camera Setup')").first
-            if await cam_tab.is_visible():
-                await cam_tab.click()
+            gap_tab = page.locator("button:has-text('Gap'), button:has-text('Registry'), button:has-text('Cameras')").first
+            if await gap_tab.is_visible():
+                await gap_tab.click()
             else:
                 await page.click("nav button:nth-child(4)")
         except Exception:
             pass
-        await asyncio.sleep(dur5 - 10)
+        await asyncio.sleep(4)
+        
+        # Hover over gap analysis cards and camera inventory
+        await page.mouse.move(600, 300)
+        await asyncio.sleep(4)
+        await page.mouse.wheel(0, 150)
+        await asyncio.sleep(3)
+        await page.mouse.wheel(0, -150)
+        await asyncio.sleep(2)
+        
+        rem6 = max(1.0, dur6 - 13.0)
+        await asyncio.sleep(rem6)
 
         # Finish and save
         await page.close()
         video_path = await page.video.path()
         await context.close()
         await browser.close()
-        print(f"\nRaw screen video: {video_path}")
+        print(f"\nRaw screen video recorded: {video_path}")
         return video_path
 
 async def merge_precise_video(raw_video_path):
@@ -295,11 +334,8 @@ async def merge_precise_video(raw_video_path):
     
     if os.path.exists(final_video):
         size_mb = os.path.getsize(final_video) / (1024 * 1024)
-        print("\n" + "="*65)
-        print(f"SUCCESS: Synchronized Demonstration Video Created!")
-        print(f"File Path: {final_video}")
-        print(f"File Size: {size_mb:.2f} MB")
-        print("="*65)
+        print(f"\nSUCCESS: Live Demonstration Video Created: {final_video} ({size_mb:.2f} MB)")
+    return final_video
 
 async def main():
     durations = await generate_precise_audio()

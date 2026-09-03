@@ -15,54 +15,55 @@ VOICE = "en-US-ChristopherNeural"
 # ================= EXACT TEXTS FOR EACH SEGMENT =================
 SEGMENTS = [
     {
-        "id": "seg1_dashboard",
-        "title": "Surveillance Dashboard & Live Stats",
+        "id": "seg1_auth",
+        "title": "Officer Authentication & Security Gateway",
         "text": (
-            "Welcome to the live demonstration of the Sentinel AI Surveillance Platform for Gujarat Police. "
-            "We begin on the main Surveillance dashboard. At the top, our KPI stats bar displays live operational counters "
-            "for registered city cameras, active video streams, daily ANPR detections, and suspect hotlist matches. "
-            "On the left, we monitor live CCTV camera streams, while the right sidebar displays the real-time alert feed "
-            "as vehicles pass through city checkpoints."
+            "Welcome to the official demonstration of the Sentinel AI Surveillance Platform for Gujarat Police. "
+            "We begin at the Officer Authentication Gateway. Every access is secured with Salted SHA-256 encryption and role-based clearance. "
+            "We log in as the Surveillance Commander, Superintendent of Police, IT and Cyber, Badge number GP-7829."
         )
     },
     {
-        "id": "seg2_cameras",
-        "title": "Live Camera Grid & AI ANPR Detections",
+        "id": "seg2_dashboard",
+        "title": "Statewide Control Room & 30 CCTV Nodes",
         "text": (
-            "Here in the Live Camera Grid, the system ingests multi-vendor RTSP streams from Hikvision, Dahua, CP Plus, and Axis "
-            "via our low-latency MediaMTX proxy. Operators can view multiple simultaneous streams, such as SG Highway and Ashram Road. "
-            "In each feed, our dual-head YOLOv8 and PaddleOCR pipeline runs continuously on-premises, detecting vehicles, "
-            "enhancing plate crops with CLAHE contrast filtering, and reading Indian license plates with over 97 percent accuracy."
+            "Here in the main Command Center, Sentinel unifies 30 official Gujarat Police CCTV cameras across Ahmedabad, Gandhinagar, Surat, and Rajkot into a single operational interface. "
+            "The top KPI bar tracks live stream health, daily vehicle scans, and hotlist matches. "
+            "Operators can seamlessly filter feeds across all 26 state departments, including Traffic Police, Civil Supplies, and RTO."
         )
     },
     {
-        "id": "seg3_hotlist",
-        "title": "Real-Time Hotlist Alert & Siren Trigger",
+        "id": "seg3_streaming_anpr",
+        "title": "60 FPS HLS Video & Real-Time AI ANPR",
         "text": (
-            "Now, a red-flagged vehicle passes the SG Highway checkpoint. In less than 400 milliseconds, our in-memory Redis hotlist engine "
-            "detects a critical match for FIR-2026-9081, a stolen white SUV. The operator immediately receives an audio-visual siren on the right sidebar, "
-            "displaying the vehicle plate GJ 01 AB 1234, high-resolution snapshot crop, and location details. "
-            "The operator can click Acknowledge to confirm the incident and alert field PCR patrol units."
+            "Clicking on a live node, such as Chimanbhai Bridge or Janpath, activates our hardware-accelerated HLS video engine, "
+            "delivering smooth 60 frames-per-second streaming with GPU decoding. "
+            "Operators can click Scan Frame with AI to trigger on-demand vehicle classification and high-accuracy OCR license plate recognition directly from the live feed."
         )
     },
     {
-        "id": "seg4_gis",
-        "title": "Trajectory & GIS Vehicle Tracking",
+        "id": "seg4_hotlist_alerts",
+        "title": "Sub-Second Watchlist Matching & Siren Alerts",
         "text": (
-            "Next, clicking on the Trajectory and GIS tab opens our spatial intelligence module. "
-            "We enter the suspect license plate GJ 01 AB 1234 into the search bar and click Search. "
-            "The system queries PostGIS and reconstructs the vehicle's chronological journey across Ahmedabad junctions. "
-            "The map draws numbered breadcrumbs from stop 1 to stop 4, showing directional heading, transit times, "
-            "and average speeds to assist in suspect interception."
+            "When a suspect vehicle passes any camera, Sentinel's in-memory engine executes sub-millisecond cross-referencing against active eGujCop and CCTNS stolen vehicle FIR databases. "
+            "The control room receives an instant audio-visual siren, displaying the vehicle plate, high-resolution snapshot crop, GPS location, and one-click PCR intercept dispatch."
         )
     },
     {
-        "id": "seg5_watchlist_cameras",
-        "title": "Suspect Hotlist & Camera Setup",
+        "id": "seg5_trajectory_gis",
+        "title": "Chronological GIS Vehicle Trajectory & Route Reconstruction",
         "text": (
-            "Moving to the Suspect Hotlist tab, operators can view all active FIR records, including stolen vehicles and wanted suspects, "
-            "or perform bulk CSV uploads from CCTNS. Finally, the Cameras tab allows registering new RTSP camera endpoints with GPS coordinates. "
-            "Sentinel AI is 100 percent self-hosted, air-gapped network compatible, and operates with zero cloud API costs. Thank you for watching."
+            "In the Trajectory and GIS module, entering a suspect registration number reconstructs the vehicle's chronological journey across Gujarat junctions. "
+            "The interactive map renders numbered breadcrumbs from point 1 to point 4 with transit time deltas, heading vectors, and speed estimations to assist field officers in setting up roadblocks."
+        )
+    },
+    {
+        "id": "seg6_registry_gap",
+        "title": "CCTV Asset Registry & Infrastructure Gap Analysis",
+        "text": (
+            "Finally, fulfilling Model 1 requirements, our Registry and Gap Analysis module provides a centralized inventory of all state surveillance assets, "
+            "identifying coverage blind spots and aging cameras to plan future statewide expansion to 80,000 cameras. "
+            "Sentinel AI is 100 percent self-hosted, air-gapped compliant, and eliminates recurring cloud SaaS fees. Thank you."
         )
     }
 ]

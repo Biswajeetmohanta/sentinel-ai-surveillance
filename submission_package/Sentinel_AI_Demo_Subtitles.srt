@@ -1,116 +1,104 @@
 1
-00:00:00,000 --> 00:00:04,200
-Welcome to the live demonstration of Sentinel AI for Gujarat Police.
+00:00:00,000 --> 00:00:05,500
+Welcome to the official demonstration of the Sentinel AI Surveillance Platform.
 
 2
-00:00:04,200 --> 00:00:08,800
-We begin on the main Surveillance command dashboard.
+00:00:05,500 --> 00:00:10,800
+Submitted for the Gujarat Police Innovation Challenge 2026.
 
 3
-00:00:08,800 --> 00:00:14,500
-At the top, our KPI stats bar displays live operational counters:
+00:00:10,800 --> 00:00:16,500
+We begin at the secure Officer Authentication Gateway.
 
 4
-00:00:14,500 --> 00:00:20,200
-Active city cameras, video streams, daily ANPR detections, and hotlist matches.
+00:00:16,500 --> 00:00:21,200
+Every access is secured with Salted SHA-256 encryption and role-based clearance.
 
 5
-00:00:20,200 --> 00:00:26,000
-On the left, live CCTV feeds; on the right, real-time incoming alert feeds.
+00:00:21,200 --> 00:00:25,300
+Authorizing as Superintendent of Police, IT & Cyber, Badge GP-7829.
 
 6
-00:00:26,000 --> 00:00:31,800
-Running 100% on-premises with zero external cloud API costs.
+00:00:25,300 --> 00:00:31,000
+Here in the main Command Center, Sentinel unifies 30 official Gujarat Police CCTV cameras
 
 7
-00:00:31,800 --> 00:00:37,500
-Here in the Live Camera Grid, we ingest multi-vendor RTSP streams
+00:00:31,000 --> 00:00:36,800
+across Ahmedabad, Gandhinagar, Surat, and Rajkot into a single interface.
 
 8
-00:00:37,500 --> 00:00:43,200
-via our low-latency MediaMTX proxy: Hikvision, Dahua, CP Plus, and Axis.
+00:00:36,800 --> 00:00:42,500
+The top KPI bar tracks live stream health, daily vehicle scans, and hotlist matches.
 
 9
-00:00:43,200 --> 00:00:49,500
-Operators can monitor multiple simultaneous junctions like SG Highway and Ashram Road.
+00:00:42,500 --> 00:00:48,200
+Operators can seamlessly filter feeds across all 26 state departments,
 
 10
-00:00:49,500 --> 00:00:55,200
-Our dual-head YOLOv8 and PaddleOCR pipeline runs continuously on-premises,
+00:00:48,200 --> 00:00:53,800
+including Traffic Police, Civil Supplies, and RTO checkpoints.
 
 11
-00:00:55,200 --> 00:01:00,500
-detecting vehicles and enhancing plate crops with CLAHE contrast filtering,
+00:00:53,800 --> 00:00:59,500
+Clicking on a live node activates our hardware-accelerated HLS video engine,
 
 12
-00:01:00,500 --> 00:01:05,800
-reading Indian license plates with over 97% recognition accuracy.
+00:00:59,500 --> 00:01:05,200
+delivering smooth 60 frames-per-second streaming with browser GPU decoding.
 
 13
-00:01:05,800 --> 00:01:11,000
-Now, a red-flagged vehicle passes the SG Highway checkpoint.
+00:01:05,200 --> 00:01:11,000
+Operators can click Scan Frame with AI to trigger on-demand vehicle classification
 
 14
-00:01:11,000 --> 00:01:17,200
-In under 400ms, our in-memory Redis hotlist engine detects a critical match
+00:01:11,000 --> 00:01:16,600
+and high-accuracy OCR license plate recognition directly from the live feed.
 
 15
-00:01:17,200 --> 00:01:22,500
-for FIR-2026-9081 — a reported stolen white SUV.
+00:01:16,600 --> 00:01:22,200
+When a suspect vehicle passes any camera, Sentinel's in-memory engine
 
 16
-00:01:22,500 --> 00:01:28,000
-The operator receives an instant audio-visual siren on the right sidebar,
+00:01:22,200 --> 00:01:28,000
+executes sub-millisecond cross-referencing against active eGujCop and CCTNS FIR databases.
 
 17
-00:01:28,000 --> 00:01:33,500
-displaying plate GJ 01 AB 1234, snapshot crops, and location details.
+00:01:28,000 --> 00:01:34,200
+The control room receives an instant audio-visual siren with vehicle snapshot,
 
 18
-00:01:33,500 --> 00:01:38,500
-The operator can click Acknowledge to confirm the incident
+00:01:34,200 --> 00:01:40,900
+displaying GPS coordinates, FIR details, and one-click PCR intercept dispatch.
 
 19
-00:01:38,500 --> 00:01:41,100
-and immediately alert field PCR patrol units.
+00:01:40,900 --> 00:01:46,500
+In the Trajectory and GIS module, entering a suspect registration number
 
 20
-00:01:41,100 --> 00:01:46,800
-Next, clicking on Trajectory & GIS opens our spatial tracking module.
+00:01:46,500 --> 00:01:51,800
+reconstructs the vehicle's chronological journey across Gujarat junctions.
 
 21
-00:01:46,800 --> 00:01:52,500
-We enter suspect license plate GJ 01 AB 1234 and click Search.
+00:01:51,800 --> 00:01:57,200
+The interactive map renders numbered breadcrumbs from point 1 to point 4
 
 22
-00:01:52,500 --> 00:01:58,500
-The system queries PostGIS and reconstructs the vehicle's chronological journey.
+00:01:57,200 --> 00:02:02,100
+with transit time deltas, heading vectors, and speed estimations for interception.
 
 23
-00:01:58,500 --> 00:02:05,000
-The map draws numbered breadcrumbs from stop 1 to stop 4,
+00:02:02,100 --> 00:02:08,000
+Finally, fulfilling Model 1 requirements, our Registry and Gap Analysis module
 
 24
-00:02:05,000 --> 00:02:12,300
-showing directional headings, transit times, and average speeds.
+00:02:08,000 --> 00:02:14,500
+provides a centralized inventory of all state surveillance assets,
 
 25
-00:02:12,300 --> 00:02:18,000
-On the Suspect Hotlist tab, operators manage active FIR records
+00:02:14,500 --> 00:02:20,800
+identifying coverage blind spots and aging cameras to scale up to 80,000 cameras.
 
 26
-00:02:18,000 --> 00:02:23,500
-and perform bulk CSV uploads synchronized with CCTNS.
-
-27
-00:02:23,500 --> 00:02:30,000
-The Cameras tab allows registering new RTSP camera endpoints with GPS coordinates.
-
-28
-00:02:30,000 --> 00:02:37,000
-Sentinel AI is 100% self-hosted, air-gapped compatible, with zero recurring fees.
-
-29
-00:02:37,000 --> 00:02:42,600
-Thank you for watching the Sentinel AI demonstration.
+00:02:20,800 --> 00:02:28,000
+Sentinel AI is 100% self-hosted with zero recurring cloud fees. Thank you.
 
