@@ -13,23 +13,13 @@ import { ToastProvider, useToast } from './components/Toast';
 
 import { fetchCameras, fetchDashboardStats, fetchDetections } from './services/api';
 import { wsService } from './services/websocket';
-
-const DEFAULT_OFFICER = {
-  id: 1,
-  name: 'Inspector Jyoti Sharma',
-  email: 'jyoti@deventtechnology.com',
-  badge_number: 'GJ-POL-8842',
-  department: 'Crime Branch CID / ANPR Task Force',
-  token: 'sentinel_auto_auth_token'
-};
-
 function MainApp() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('sentinel_user') || sessionStorage.getItem('sentinel_user');
-      return saved ? JSON.parse(saved) : DEFAULT_OFFICER;
+      return saved ? JSON.parse(saved) : null;
     } catch {
-      return DEFAULT_OFFICER;
+      return null;
     }
   });
 
