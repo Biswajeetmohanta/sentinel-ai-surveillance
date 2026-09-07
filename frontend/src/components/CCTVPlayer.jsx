@@ -24,31 +24,25 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
     const camCode = camera?.camera_code || 'cam01';
     const src = `${BACKEND_URL}/api/v1/hls/${camCode}/index.m3u8`;
 
-    // Seek helper for live sync
-    const liveSync = () => {
-      if (video.duration && isFinite(video.duration) && video.duration > 1) {
-        try {
-          video.currentTime = (Date.now() / 1000) % video.duration;
-        } catch (e) {}
+    // Auto-fallback to portal if live stream buffers for more than 5 seconds
+    const bufferTimeout = setTimeout(() => {
+      if (video && video.readyState < 2) {
+        console.warn('HLS stream buffering, auto-switching to direct Gujarat CCTV Portal');
+        setPlayerMode('portal');
       }
-    };
+    }, 5000);
 
     if (Hls.isSupported()) {
       if (hlsRef.current) {
         hlsRef.current.destroy();
       }
       const hls = new Hls({
-        maxBufferLength: 6,
-        maxMaxBufferLength: 14,
-        backBufferLength: 12,
-        manifestLoadingTimeOut: 60000,
-        manifestLoadingMaxRetry: 6,
-        levelLoadingTimeOut: 60000,
-        levelLoadingMaxRetry: 6,
-        fragLoadingTimeOut: 60000,
-        fragLoadingMaxRetry: 12,
-        capLevelToPlayerSize: true,
-        startPosition: -1
+        maxBufferLength: 8,
+        maxMaxBufferLength: 16,
+        manifestLoadingTimeOut: 15000,
+        fragLoadingTimeOut: 20000,
+        startPosition: 0, // Start immediately from first segment without skipping
+        enableWorker: true,
       });
       hlsRef.current = hls;
       hls.attachMedia(video);
@@ -56,26 +50,30 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
         hls.loadSource(src);
       });
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.loop = true;
-        liveSync();
-        video.play().catch(() => {});
+        video.currentTime = 0;
+        video.play().then(() => {
+          clearTimeout(bufferTimeout);
+        }).catch(() => {});
       });
       hls.on(Hls.Events.ERROR, (e, data) => {
         if (data.fatal) {
-          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-            hls.recoverMediaError();
-          } else {
-            hls.destroy();
-            setStreamError(true);
-          }
+          clearTimeout(bufferTimeout);
+          hls.destroy();
+          setPlayerMode('portal');
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
-      video.loop = true;
-      video.addEventListener('loadedmetadata', liveSync, { once: true });
-      video.play().catch(() => {});
+      video.play().then(() => clearTimeout(bufferTimeout)).catch(() => {});
     }
+
+    return () => {
+      clearTimeout(bufferTimeout);
+      if (hlsRef.current) {
+        hlsRef.current.destroy();
+        hlsRef.current = null;
+      }
+    };
 
     return () => {
       if (hlsRef.current) {
