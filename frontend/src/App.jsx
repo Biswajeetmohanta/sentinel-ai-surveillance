@@ -125,7 +125,7 @@ function MainApp() {
     if (!currentUser) return;
 
     loadInitialData();
-    const interval = setInterval(loadInitialData, 8000);
+    const interval = setInterval(loadInitialData, 25000);
 
     // Connect WebSocket for real-time live feeds and alerts
     wsService.connect();
