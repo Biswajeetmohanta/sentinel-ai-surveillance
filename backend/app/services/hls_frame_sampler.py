@@ -224,35 +224,37 @@ class HLSFrameSampler:
 
         while self.is_running:
             try:
+                # 1. Quick DB read: get cameras and immediately close session
                 async with AsyncSessionLocal() as session:
-                    # Get all active cameras
                     cams_res = await session.execute(
                         select(Camera).where(Camera.is_active == True).order_by(Camera.id)
                     )
                     cameras = cams_res.scalars().all()
-                    if not cameras:
-                        await asyncio.sleep(10)
-                        continue
 
-                    # Round-robin camera selection (ensures all cameras get sampled)
-                    self._camera_index = self._camera_index % len(cameras)
-                    camera = cameras[self._camera_index]
-                    self._camera_index += 1
+                if not cameras:
+                    await asyncio.sleep(10)
+                    continue
 
-                    logger.info(f"📷 Sampling frame from {camera.name} ({camera.camera_code}) — {camera.hls_url}")
+                # Round-robin camera selection
+                self._camera_index = self._camera_index % len(cameras)
+                camera = cameras[self._camera_index]
+                self._camera_index += 1
 
-                    # Grab a real frame from the live HLS stream
-                    frame = await self.grab_frame(camera)
+                logger.info(f"📷 Sampling frame from {camera.name} ({camera.camera_code}) — {camera.hls_url}")
 
-                    if frame is not None:
-                        logger.info(f"✅ Got live frame from {camera.name}: {frame.shape[1]}x{frame.shape[0]}")
+                # 2. Network & Image processing: NO database lock held!
+                frame = await self.grab_frame(camera)
 
-                        # Run real ANPR pipeline (YOLO + OCR → DB → WebSocket)
+                if frame is not None:
+                    logger.info(f"✅ Got live frame from {camera.name}: {frame.shape[1]}x{frame.shape[0]}")
+
+                    # 3. Quick DB write: open session only during record insertion
+                    async with AsyncSessionLocal() as session:
                         result = await anpr_engine.process_frame(
                             frame=frame,
                             camera=camera,
                             db=session,
-                            mock_plate=None  # NO mock — real detection only
+                            mock_plate=None
                         )
 
                         if result:
@@ -264,14 +266,13 @@ class HLSFrameSampler:
                             )
                             consecutive_failures = 0
                         else:
-                            # Frame was valid but no plate was readable
-                            # Still count as a vehicle pass-through (vehicle detected, plate unclear)
+                            # Frame was valid but plate was unreadable — log vehicle pass-through count
                             logger.info(f"🚙 Vehicle detected at {camera.name} but plate not readable — logging as pass-through")
                             await self._log_passthrough_detection(camera, frame, session)
                             consecutive_failures = 0
-                    else:
-                        logger.debug(f"⚠️ Could not grab frame from {camera.name}")
-                        consecutive_failures += 1
+                else:
+                    logger.debug(f"⚠️ Could not grab frame from {camera.name}")
+                    consecutive_failures += 1
 
                 # Adaptive delay: faster when cameras are responding, slower when failing
                 if consecutive_failures > 10:

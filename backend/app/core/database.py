@@ -4,7 +4,11 @@ from app.core.config import settings
 
 # Create async engine with pool settings
 engine_args = {}
-if "sqlite" not in settings.DATABASE_URL:
+if "sqlite" in settings.DATABASE_URL:
+    engine_args = {
+        "connect_args": {"timeout": 30}
+    }
+else:
     engine_args = {
         "pool_size": 20,
         "max_overflow": 10,
