@@ -80,25 +80,18 @@ class StreamManager:
                     cap.release()
 
     async def simulate_traffic_cycle(self):
-        """Live ANPR traffic simulation — plates go through the full detection pipeline:
-        detect → DB insert → watchlist match → WebSocket broadcast → dashboard stats count.
-        This ensures the 'Today's Plates Scanned' counter reflects real activity."""
-        logger.info("Starting Sentinel Live ANPR Traffic Simulation Loop...")
+        """Smart City traffic simulation loop to complement active cameras"""
+        logger.info("Starting Sentinel Smart City Traffic Alert Loop...")
         
-        # Normal civilian plates (distinct from watchlist entries)
-        normal_plates = [
-            "GJ01AB5678", "GJ01XY9876", "GJ06KK8899", "GJ18ZZ7711",
-            "GJ03BC5544", "GJ12DE6677", "GJ01EF5522", "GJ27GH9988",
-            "GJ05TR3131", "GJ01KM7766", "GJ14PP2233", "GJ02RA4455",
-            "GJ08WT6688", "GJ15HN1122", "GJ03JQ7744", "GJ01BZ3399",
-            "GJ06MS8811", "GJ18KD5577", "GJ27LP6622", "GJ05NK4488",
-            "GJ11CC9933", "GJ01DW2277", "GJ09FV1166", "GJ03GT8855",
+        sample_normal_plates = [
+            "GJ01AB1234", "GJ01XY9876", "GJ27CR4421", "GJ05MN3321",
+            "GJ06KK8899", "GJ18ZZ7711", "GJ03BC5544", "GJ12DE6677",
+            "GJ01EF5522", "GJ27GH9988", "GJ05TR3131", "GJ01KM7766"
         ]
-        vehicle_classes = ["Car", "Car", "Car", "Motorcycle", "Bus", "Truck", "Car", "Motorcycle"]
         
         while self.is_running:
             try:
-                await asyncio.sleep(random.randint(8, 18))
+                await asyncio.sleep(random.randint(5, 9))
                 
                 async with AsyncSessionLocal() as session:
                     cams_res = await session.execute(select(Camera).where(Camera.is_active == True))
@@ -108,14 +101,14 @@ class StreamManager:
                         
                     camera = random.choice(cameras)
                     
-                    # 15% probability of hotlisted plate to trigger real control room alert
+                    # 30% probability of hotlisted plate to trigger live control room alert
                     wl_res = await session.execute(select(Watchlist).where(Watchlist.is_active == True))
                     watchlist_items = wl_res.scalars().all()
                     
-                    if watchlist_items and random.random() < 0.15:
+                    if watchlist_items and random.random() < 0.30:
                         target_plate = random.choice(watchlist_items).plate_number
                     else:
-                        target_plate = random.choice(normal_plates)
+                        target_plate = random.choice(sample_normal_plates)
                         
                     await anpr_engine.process_frame(
                         frame=None,
@@ -124,34 +117,39 @@ class StreamManager:
                         mock_plate=target_plate
                     )
             except Exception as e:
-                logger.error(f"Traffic simulation error: {e}")
+                logger.error(f"Traffic cycle error: {e}")
                 await asyncio.sleep(5)
 
     async def start(self):
         self.is_running = True
         logger.info("Sentinel AI ANPR Engine initialized - Real camera analysis mode active.")
         
-        # On cloud instances (Render), disable continuous background RTSP decoding by default so CPU stays 100% free for instant Login & API responses
         enable_rtsp = os.getenv("ENABLE_RTSP_WORKER", "false").lower() in ("true", "1", "yes")
-        if not enable_rtsp:
-            logger.info("RTSP workers idle for cloud. Starting live ANPR traffic simulation cycle...")
-            # Start the real ANPR traffic simulation — plates flow through the full pipeline:
-            # detect → DB insert → watchlist match → WebSocket broadcast → dashboard stats
-            sim_task = asyncio.create_task(self.simulate_traffic_cycle())
-            self.active_tasks[-1] = sim_task
-            return
-
-        # Spawn live RTSP worker if explicitly enabled
-        async with AsyncSessionLocal() as session:
-            cam_res = await session.execute(select(Camera).where(Camera.camera_code == "cam01"))
-            cam = cam_res.scalar_one_or_none()
-            if cam:
-                auth_rtsp = f"rtsp://jyoti%40deventtechnology.com:CBUB-226S-HMZ9@103.250.160.189:8554/stream/{cam.camera_code or 'cam01'}"
-                task = asyncio.create_task(self.start_stream_worker(cam.id, auth_rtsp))
-                self.active_tasks[cam.id] = task
+        
+        if enable_rtsp:
+            # Spawn live RTSP worker if explicitly enabled (on-premise GPU servers)
+            async with AsyncSessionLocal() as session:
+                cam_res = await session.execute(select(Camera).where(Camera.camera_code == "cam01"))
+                cam = cam_res.scalar_one_or_none()
+                if cam:
+                    auth_rtsp = f"rtsp://jyoti%40deventtechnology.com:CBUB-226S-HMZ9@103.250.160.189:8554/stream/{cam.camera_code or 'cam01'}"
+                    task = asyncio.create_task(self.start_stream_worker(cam.id, auth_rtsp))
+                    self.active_tasks[cam.id] = task
+        
+        # Always start real HLS frame sampling — grabs actual frames from live cameras
+        from app.services.hls_frame_sampler import hls_sampler
+        logger.info("🎥 Starting REAL HLS frame sampling from all 30 Gujarat Police cameras...")
+        hls_task = asyncio.create_task(hls_sampler.start())
+        self.active_tasks[-1] = hls_task
 
     async def stop(self):
         self.is_running = False
+        # Stop HLS sampler
+        try:
+            from app.services.hls_frame_sampler import hls_sampler
+            await hls_sampler.stop()
+        except:
+            pass
         for cam_id, task in self.active_tasks.items():
             task.cancel()
         self.active_tasks.clear()

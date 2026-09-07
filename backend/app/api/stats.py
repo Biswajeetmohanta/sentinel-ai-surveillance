@@ -17,25 +17,41 @@ async def get_dashboard_overview(db: AsyncSession = Depends(get_db)):
     total_cams = (await db.execute(select(func.count(Camera.id)))).scalar() or 0
     active_cams = (await db.execute(select(func.count(Camera.id)).where(Camera.is_active == True))).scalar() or 0
     
-    # 2. Today's detections
+    # 2. Today's detections (all vehicles including unreadable plates)
     today_start = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     total_det_today = (await db.execute(
         select(func.count(Detection.id)).where(Detection.detected_at >= today_start)
     )).scalar() or 0
     
-    # 3. Today's watchlist alerts
+    # 3. Today's readable plate scans (exclude UNREADABLE pass-throughs)
+    readable_plates_today = (await db.execute(
+        select(func.count(Detection.id))
+        .where(Detection.detected_at >= today_start)
+        .where(Detection.plate_number != "UNREADABLE")
+    )).scalar() or 0
+    
+    # 4. Today's watchlist alerts
     alerts_today = (await db.execute(
         select(func.count(Detection.id))
         .where(Detection.detected_at >= today_start)
         .where(Detection.is_watchlist_match == True)
     )).scalar() or 0
     
-    # 4. Active Watchlist Count & breakdown
+    # 5. Active Watchlist Count & breakdown
     active_wl = (await db.execute(select(func.count(Watchlist.id)).where(Watchlist.is_active == True))).scalar() or 0
     
     breakdown_query = select(Watchlist.crime_category, func.count(Watchlist.id)).group_by(Watchlist.crime_category)
     breakdown_res = (await db.execute(breakdown_query)).all()
     breakdown_dict = {row[0]: row[1] for row in breakdown_res}
+    
+    # 6. Per-camera detection counts today
+    per_cam_query = (
+        select(Detection.camera_id, func.count(Detection.id))
+        .where(Detection.detected_at >= today_start)
+        .group_by(Detection.camera_id)
+    )
+    per_cam_res = (await db.execute(per_cam_query)).all()
+    per_camera_counts = {str(row[0]): row[1] for row in per_cam_res}
     
     return DashboardStats(
         total_cameras=total_cams,
@@ -43,5 +59,8 @@ async def get_dashboard_overview(db: AsyncSession = Depends(get_db)):
         total_detections_today=total_det_today,
         total_watchlist_alerts_today=alerts_today,
         active_hotlist_count=active_wl,
-        hotlist_breakdown=breakdown_dict
+        hotlist_breakdown=breakdown_dict,
+        per_camera_detections=per_camera_counts,
+        readable_plates_today=readable_plates_today
     )
+

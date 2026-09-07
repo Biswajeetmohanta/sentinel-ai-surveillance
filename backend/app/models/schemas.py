@@ -154,6 +154,8 @@ class DashboardStats(BaseModel):
     total_watchlist_alerts_today: int
     active_hotlist_count: int
     hotlist_breakdown: dict
+    per_camera_detections: dict = {}
+    readable_plates_today: int = 0
 
 
 # --- User & Auth Schemas ---
