@@ -191,6 +191,7 @@ async def websocket_alerts_endpoint(websocket_conn: WebSocket):
         websocket.manager.disconnect(websocket_conn)
 
 @app.get("/")
+@app.head("/")
 async def root():
     return {
         "status": "online",
@@ -199,3 +200,9 @@ async def root():
         "docs_url": "/docs",
         "websocket_url": "/ws/alerts"
     }
+
+@app.get("/health")
+@app.head("/health")
+@app.get("/api/v1/health")
+async def health_check():
+    return {"status": "ok", "service": "sentinel-api", "time": "2026-09-07"}
