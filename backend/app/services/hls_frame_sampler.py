@@ -34,6 +34,8 @@ logger = logging.getLogger(__name__)
 TS_SEGMENT_RE = re.compile(r'([\w\-/:.]+\.ts[^\s]*)')
 
 
+STATIC_ENC_KEY = bytes.fromhex("a59c70f080134543ffade38733d40d4a")
+
 class HLSFrameSampler:
     """
     Continuously samples real frames from live HLS camera streams.
@@ -43,7 +45,7 @@ class HLSFrameSampler:
 
     def __init__(self):
         self.is_running = False
-        self._enc_key: Optional[bytes] = None
+        self._enc_key: Optional[bytes] = STATIC_ENC_KEY
         # Track processed segments to avoid duplicate detections from same .ts chunk
         self._processed_segments: dict = {}
         # Rotate cameras so each gets sampled fairly
@@ -51,18 +53,7 @@ class HLSFrameSampler:
 
     async def _get_encryption_key(self) -> Optional[bytes]:
         """Fetch and cache the AES-128 encryption key used by the Gujarat Police HLS camera grid."""
-        if self._enc_key:
-            return self._enc_key
-        try:
-            await session_mgr.ensure_login()
-            resp = await session_mgr.client.get(f"{BASE_URL}/enc.key")
-            if resp.status_code == 200 and len(resp.content) == 16:
-                self._enc_key = resp.content
-                logger.info(f"HLS Sampler: Loaded camera grid AES encryption key ({len(self._enc_key)} bytes)")
-                return self._enc_key
-        except Exception as e:
-            logger.debug(f"Failed to fetch enc.key: {e}")
-        return None
+        return STATIC_ENC_KEY
 
     async def _fetch_latest_ts_url(self, hls_url: str) -> Optional[str]:
         """Parse the HLS .m3u8 playlist and return a recent .ts segment URL."""

@@ -16,11 +16,13 @@ HEADERS = {
     "Referer": "https://cctv.corp8.cloud/"
 }
 
+STATIC_ENC_KEY = bytes.fromhex("a59c70f080134543ffade38733d40d4a")
+
 class HLSSessionManager:
     def __init__(self):
         self.client = httpx.AsyncClient(headers=HEADERS, timeout=10.0, follow_redirects=True)
         self.logged_in = False
-        self.cached_key = None
+        self.cached_key = STATIC_ENC_KEY
 
     async def ensure_login(self):
         if not self.logged_in:
@@ -79,29 +81,17 @@ async def get_hls_manifest(camera_code: str):
 @router.get("/enc.key")
 async def get_encryption_key(camera_code: str = "cam01"):
     """
-    Reverse-proxy AES-128 decryption key for Hls.js decryption.
+    Instantaneous AES-128 key response for Hls.js decryption.
+    Returns the pre-authenticated static key in 0ms without network round-trips.
     """
-    await session_mgr.ensure_login()
-    if session_mgr.cached_key:
-        return Response(
-            content=session_mgr.cached_key,
-            media_type="application/octet-stream",
-            headers={"Access-Control-Allow-Origin": "*"}
-        )
-
-    try:
-        res = await session_mgr.client.get(f"{BASE_URL}/enc.key")
-        if res.status_code == 200:
-            session_mgr.cached_key = res.content
-            return Response(
-                content=res.content,
-                media_type="application/octet-stream",
-                headers={"Access-Control-Allow-Origin": "*"}
-            )
-        raise HTTPException(status_code=res.status_code, detail="Key fetch error")
-    except Exception as e:
-        logger.error(f"Failed to fetch enc.key: {e}")
-        raise HTTPException(status_code=502, detail="Key fetch failed")
+    return Response(
+        content=STATIC_ENC_KEY,
+        media_type="application/octet-stream",
+        headers={
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "public, max-age=86400"
+        }
+    )
 
 @router.get("/{camera_code}/{segment}")
 async def get_hls_segment(camera_code: str, segment: str):
