@@ -24,13 +24,14 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
     const camCode = camera?.camera_code || 'cam01';
     const src = `${BACKEND_URL}/api/v1/hls/${camCode}/index.m3u8`;
 
-    // Auto-fallback to portal if live stream buffers for more than 5 seconds
-    const bufferTimeout = setTimeout(() => {
-      if (video && video.readyState < 2) {
-        console.warn('HLS stream buffering, auto-switching to direct Gujarat CCTV Portal');
-        setPlayerMode('portal');
+    // Seek helper for live sync
+    const liveSync = () => {
+      if (video.duration && isFinite(video.duration) && video.duration > 1) {
+        try {
+          video.currentTime = (Date.now() / 1000) % video.duration;
+        } catch (e) {}
       }
-    }, 5000);
+    };
 
     if (Hls.isSupported()) {
       if (hlsRef.current) {
@@ -39,9 +40,8 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
       const hls = new Hls({
         maxBufferLength: 8,
         maxMaxBufferLength: 16,
-        manifestLoadingTimeOut: 15000,
-        fragLoadingTimeOut: 20000,
-        startPosition: 0, // Start immediately from first segment without skipping
+        manifestLoadingTimeOut: 30000,
+        fragLoadingTimeOut: 30000,
         enableWorker: true,
       });
       hlsRef.current = hls;
@@ -50,30 +50,26 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
         hls.loadSource(src);
       });
       hls.on(Hls.Events.MANIFEST_PARSED, () => {
-        video.currentTime = 0;
-        video.play().then(() => {
-          clearTimeout(bufferTimeout);
-        }).catch(() => {});
+        video.loop = true;
+        liveSync();
+        video.play().catch(() => {});
       });
       hls.on(Hls.Events.ERROR, (e, data) => {
         if (data.fatal) {
-          clearTimeout(bufferTimeout);
-          hls.destroy();
-          setPlayerMode('portal');
+          if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+            hls.recoverMediaError();
+          } else {
+            hls.destroy();
+            setStreamError(true);
+          }
         }
       });
     } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
       video.src = src;
-      video.play().then(() => clearTimeout(bufferTimeout)).catch(() => {});
+      video.loop = true;
+      video.addEventListener('loadedmetadata', liveSync, { once: true });
+      video.play().catch(() => {});
     }
-
-    return () => {
-      clearTimeout(bufferTimeout);
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-    };
 
     return () => {
       if (hlsRef.current) {
@@ -285,23 +281,6 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
 
             <button
               type="button"
-              onClick={() => { setPlayerMode('portal'); setStreamError(false); }}
-              style={{
-                background: playerMode === 'portal' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255,255,255,0.05)',
-                border: `1px solid ${playerMode === 'portal' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`,
-                color: playerMode === 'portal' ? '#60a5fa' : '#94a3b8',
-                padding: '5px 12px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: '700',
-                cursor: 'pointer',
-              }}
-            >
-              🌐 CCTV Portal
-            </button>
-
-            <button
-              type="button"
               onClick={openSandboxExternal}
               className="btn-secondary"
               title="Open the official Gujarat Police sandbox in full browser tab"
@@ -351,33 +330,46 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
                   style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#000' }}
                 />
               ) : (
-                <div style={{ width: '100%', height: '100%', position: 'relative', background: '#070b14', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
-                  <iframe
-                    src="https://cctv.corp8.cloud/"
-                    title="Gujarat Police CCTV Live Stream"
-                    style={{ width: '100%', height: '100%', border: 'none', borderRadius: '8px' }}
-                    allow="autoplay; fullscreen"
-                  />
-                  <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px' }}>
+                <div style={{ width: '100%', height: '100%', position: 'relative', background: '#0a0f1d', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '12px', padding: '24px' }}>
+                  <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid rgba(59, 130, 246, 0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Radio size={22} color="#60a5fa" />
+                  </div>
+                  <div style={{ textAlign: 'center' }}>
+                    <h3 style={{ fontSize: '14px', fontWeight: '700', color: '#fff', marginBottom: '4px' }}>
+                      {camera?.name || 'CCTV Camera Stream'}
+                    </h3>
+                    <p style={{ fontSize: '12px', color: '#94a3b8' }}>
+                      Re-establishing live encrypted HLS video feed from Gujarat Police Sandbox...
+                    </p>
+                  </div>
+                  <div style={{ display: 'flex', gap: '10px', marginTop: '6px' }}>
+                    <button
+                      type="button"
+                      onClick={() => setStreamError(false)}
+                      style={{
+                        background: 'linear-gradient(135deg, #2563eb, #1d4ed8)',
+                        border: 'none',
+                        color: '#fff',
+                        padding: '8px 18px',
+                        borderRadius: '6px',
+                        fontSize: '12px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px',
+                        boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
+                      }}
+                    >
+                      <RefreshCw size={14} /> Retry Feed Connection
+                    </button>
                     <button
                       type="button"
                       onClick={openSandboxExternal}
-                      style={{
-                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                        border: 'none',
-                        color: '#fff',
-                        padding: '7px 14px',
-                        borderRadius: '6px',
-                        fontSize: '11px',
-                        fontWeight: '700',
-                        cursor: 'pointer',
-                        boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '5px'
-                      }}
+                      className="btn-secondary"
+                      style={{ fontSize: '12px', padding: '8px 16px', display: 'flex', alignItems: 'center', gap: '6px' }}
                     >
-                      <ExternalLink size={13} /> Open Live Feed in New Tab
+                      <ExternalLink size={14} /> Open Feed in New Tab
                     </button>
                   </div>
                 </div>
@@ -463,40 +455,6 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
                 }}
               >
                 ● LIVE LAPTOP WEBCAM ACTIVE • HOLD NUMBER PLATE IN THE BOX
-              </div>
-            </div>
-          )}
-
-          {/* Mode 3: Official Gujarat Police CCTV Video Grid Portal */}
-          {playerMode === 'portal' && (
-            <div style={{ width: '100%', height: '100%', position: 'relative', background: '#070b14' }}>
-              <iframe
-                src="https://cctv.corp8.cloud/"
-                title="Gujarat Police Live CCTV Grid"
-                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
-                allow="autoplay; fullscreen"
-              />
-              <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 10 }}>
-                <button
-                  type="button"
-                  onClick={openSandboxExternal}
-                  style={{
-                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-                    border: 'none',
-                    color: '#fff',
-                    padding: '7px 14px',
-                    borderRadius: '6px',
-                    fontSize: '11px',
-                    fontWeight: '700',
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '5px'
-                  }}
-                >
-                  <ExternalLink size={13} /> Open Fullscreen Tab
-                </button>
               </div>
             </div>
           )}
