@@ -287,6 +287,23 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
 
             <button
               type="button"
+              onClick={() => { setPlayerMode('portal'); setStreamError(false); }}
+              style={{
+                background: playerMode === 'portal' ? 'rgba(59, 130, 246, 0.25)' : 'rgba(255,255,255,0.05)',
+                border: `1px solid ${playerMode === 'portal' ? '#3b82f6' : 'rgba(255,255,255,0.1)'}`,
+                color: playerMode === 'portal' ? '#60a5fa' : '#94a3b8',
+                padding: '5px 12px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: '700',
+                cursor: 'pointer',
+              }}
+            >
+              🌐 CCTV Portal
+            </button>
+
+            <button
+              type="button"
               onClick={openSandboxExternal}
               className="btn-secondary"
               title="Open the official Gujarat Police sandbox in full browser tab"
@@ -298,7 +315,7 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
                 gap: '4px',
               }}
             >
-              <ExternalLink size={12} /> Portal Tab
+              <ExternalLink size={12} /> External Tab
             </button>
 
             <button
@@ -336,11 +353,36 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
                   style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block', background: '#000' }}
                 />
               ) : (
-                <img
-                  src={`${BACKEND_URL}/api/v1/stream/live-video/${camera?.camera_code || 'cam01'}`}
-                  alt="Real Gujarat Street CCTV Feed"
-                  style={{ width: '100%', height: '100%', objectFit: 'contain', display: 'block' }}
-                />
+                <div style={{ width: '100%', height: '100%', position: 'relative', background: '#070b14', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
+                  <iframe
+                    src="https://cctv.corp8.cloud/"
+                    title="Gujarat Police CCTV Live Stream"
+                    style={{ width: '100%', height: '100%', border: 'none', borderRadius: '8px' }}
+                    allow="autoplay; fullscreen"
+                  />
+                  <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 10, display: 'flex', gap: '8px' }}>
+                    <button
+                      type="button"
+                      onClick={openSandboxExternal}
+                      style={{
+                        background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                        border: 'none',
+                        color: '#fff',
+                        padding: '7px 14px',
+                        borderRadius: '6px',
+                        fontSize: '11px',
+                        fontWeight: '700',
+                        cursor: 'pointer',
+                        boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '5px'
+                      }}
+                    >
+                      <ExternalLink size={13} /> Open Live Feed in New Tab
+                    </button>
+                  </div>
+                </div>
               )}
 
               {/* Live Telemetry Overlay */}
@@ -423,6 +465,40 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
                 }}
               >
                 ● LIVE LAPTOP WEBCAM ACTIVE • HOLD NUMBER PLATE IN THE BOX
+              </div>
+            </div>
+          )}
+
+          {/* Mode 3: Official Gujarat Police CCTV Video Grid Portal */}
+          {playerMode === 'portal' && (
+            <div style={{ width: '100%', height: '100%', position: 'relative', background: '#070b14' }}>
+              <iframe
+                src="https://cctv.corp8.cloud/"
+                title="Gujarat Police Live CCTV Grid"
+                style={{ width: '100%', height: '100%', border: 'none', display: 'block' }}
+                allow="autoplay; fullscreen"
+              />
+              <div style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 10 }}>
+                <button
+                  type="button"
+                  onClick={openSandboxExternal}
+                  style={{
+                    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                    border: 'none',
+                    color: '#fff',
+                    padding: '7px 14px',
+                    borderRadius: '6px',
+                    fontSize: '11px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(37,99,235,0.4)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '5px'
+                  }}
+                >
+                  <ExternalLink size={13} /> Open Fullscreen Tab
+                </button>
               </div>
             </div>
           )}
