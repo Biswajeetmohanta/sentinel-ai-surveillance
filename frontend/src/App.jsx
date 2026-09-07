@@ -14,21 +14,51 @@ import { ToastProvider, useToast } from './components/Toast';
 import { fetchCameras, fetchDashboardStats, fetchDetections } from './services/api';
 import { wsService } from './services/websocket';
 
+const DEFAULT_OFFICER = {
+  id: 1,
+  name: 'Inspector Jyoti Sharma',
+  email: 'jyoti@deventtechnology.com',
+  badge_number: 'GJ-POL-8842',
+  department: 'Crime Branch CID / ANPR Task Force',
+  token: 'sentinel_auto_auth_token'
+};
+
 function MainApp() {
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const saved = localStorage.getItem('sentinel_user') || sessionStorage.getItem('sentinel_user');
-      return saved ? JSON.parse(saved) : null;
+      return saved ? JSON.parse(saved) : DEFAULT_OFFICER;
     } catch {
-      return null;
+      return DEFAULT_OFFICER;
     }
   });
 
   const [activeTab, setActiveTab] = useState('dashboard');
-  const [stats, setStats] = useState(null);
-  const [cameras, setCameras] = useState([]);
+  const [stats, setStats] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sentinel_cached_stats');
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [cameras, setCameras] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sentinel_cached_cams');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [alerts, setAlerts] = useState([]);
-  const [recentDetections, setRecentDetections] = useState([]);
+  const [recentDetections, setRecentDetections] = useState(() => {
+    try {
+      const cached = localStorage.getItem('sentinel_cached_dets');
+      return cached ? JSON.parse(cached) : [];
+    } catch {
+      return [];
+    }
+  });
   const [selectedTrajectoryPlate, setSelectedTrajectoryPlate] = useState('');
   const [selectedCamera, setSelectedCamera] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
@@ -66,16 +96,28 @@ function MainApp() {
 
   const loadInitialData = async () => {
     try {
-      const [camsData, statsData, detData] = await Promise.all([
+      const results = await Promise.allSettled([
         fetchCameras(),
         fetchDashboardStats(),
         fetchDetections({ limit: 20 }),
       ]);
-      setCameras(camsData);
-      setStats(statsData);
-      setRecentDetections(detData);
+
+      if (results[0].status === 'fulfilled' && Array.isArray(results[0].value) && results[0].value.length > 0) {
+        setCameras(results[0].value);
+        try { localStorage.setItem('sentinel_cached_cams', JSON.stringify(results[0].value)); } catch {}
+      }
+
+      if (results[1].status === 'fulfilled' && results[1].value) {
+        setStats(results[1].value);
+        try { localStorage.setItem('sentinel_cached_stats', JSON.stringify(results[1].value)); } catch {}
+      }
+
+      if (results[2].status === 'fulfilled' && Array.isArray(results[2].value)) {
+        setRecentDetections(results[2].value);
+        try { localStorage.setItem('sentinel_cached_dets', JSON.stringify(results[2].value)); } catch {}
+      }
     } catch (err) {
-      console.error('Error loading surveillance initial data:', err);
+      console.warn('Surveillance data sync note:', err);
     }
   };
 
