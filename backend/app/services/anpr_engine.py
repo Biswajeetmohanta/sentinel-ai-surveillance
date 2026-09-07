@@ -127,9 +127,9 @@ class ANPREngine:
             confidence = 0.94
             vehicle_class = "Car"
 
-            # Run real YOLO inference if frame is valid
             if frame is not None and self.yolo_model is not None and not mock_plate:
-                results = self.yolo_model(frame, verbose=False, conf=settings.AI_CONFIDENCE_THRESHOLD)
+                # CCTV cameras require realistic detection confidence (0.25)
+                results = self.yolo_model(frame, verbose=False, conf=0.25)
                 # Parse bounding boxes
                 for r in results:
                     for box in r.boxes:

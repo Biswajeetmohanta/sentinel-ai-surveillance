@@ -16,14 +16,17 @@ import numpy as np
 import httpx
 import re
 import os
+import tempfile
 from datetime import datetime
 from typing import Optional, List, Tuple
 from sqlalchemy.future import select
 from sqlalchemy import func
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
 
 from app.core.database import AsyncSessionLocal
 from app.models.db_models import Camera, Detection, Watchlist
 from app.services.anpr_engine import anpr_engine
+from app.api.hls_proxy import session_mgr, BASE_URL
 
 logger = logging.getLogger(__name__)
 
@@ -40,86 +43,101 @@ class HLSFrameSampler:
 
     def __init__(self):
         self.is_running = False
-        self._http_client: Optional[httpx.AsyncClient] = None
+        self._enc_key: Optional[bytes] = None
         # Track processed segments to avoid duplicate detections from same .ts chunk
         self._processed_segments: dict = {}
         # Rotate cameras so each gets sampled fairly
         self._camera_index = 0
 
-    async def _get_client(self) -> httpx.AsyncClient:
-        if self._http_client is None or self._http_client.is_closed:
-            self._http_client = httpx.AsyncClient(
-                timeout=httpx.Timeout(15.0, connect=10.0),
-                follow_redirects=True,
-                verify=False,
-            )
-        return self._http_client
+    async def _get_encryption_key(self) -> Optional[bytes]:
+        """Fetch and cache the AES-128 encryption key used by the Gujarat Police HLS camera grid."""
+        if self._enc_key:
+            return self._enc_key
+        try:
+            await session_mgr.ensure_login()
+            resp = await session_mgr.client.get(f"{BASE_URL}/enc.key")
+            if resp.status_code == 200 and len(resp.content) == 16:
+                self._enc_key = resp.content
+                logger.info(f"HLS Sampler: Loaded camera grid AES encryption key ({len(self._enc_key)} bytes)")
+                return self._enc_key
+        except Exception as e:
+            logger.debug(f"Failed to fetch enc.key: {e}")
+        return None
 
     async def _fetch_latest_ts_url(self, hls_url: str) -> Optional[str]:
-        """Parse the HLS .m3u8 playlist and return the latest .ts segment URL."""
+        """Parse the HLS .m3u8 playlist and return a recent .ts segment URL."""
         try:
-            client = await self._get_client()
-            resp = await client.get(hls_url)
+            await session_mgr.ensure_login()
+            resp = await session_mgr.client.get(hls_url)
             if resp.status_code != 200:
                 return None
 
             playlist = resp.text
-            # Find all .ts segment references
             segments = TS_SEGMENT_RE.findall(playlist)
             if not segments:
-                # Try line-by-line for simple playlists
                 for line in playlist.strip().split('\n'):
                     line = line.strip()
-                    if line and not line.startswith('#'):
+                    if line and line.endswith('.ts'):
                         segments.append(line)
 
             if not segments:
                 return None
 
-            # Pick the latest (last) segment
-            latest_seg = segments[-1]
+            # Pick from recent segments so we see active, varied traffic across sampling rounds
+            recent_segments = segments[-20:] if len(segments) >= 20 else segments
+            selected_seg = random.choice(recent_segments)
 
             # Build absolute URL if relative
-            if not latest_seg.startswith('http'):
+            if not selected_seg.startswith('http'):
                 base = hls_url.rsplit('/', 1)[0]
-                latest_seg = f"{base}/{latest_seg}"
+                selected_seg = f"{base}/{selected_seg}"
 
-            return latest_seg
+            return selected_seg
         except Exception as e:
             logger.debug(f"HLS playlist fetch error for {hls_url}: {e}")
             return None
 
     async def _grab_frame_from_ts(self, ts_url: str) -> Optional[np.ndarray]:
-        """Download a .ts video segment and decode a single frame from it."""
+        """Download a .ts video segment, decrypt AES-128 if needed, and decode a clean frame."""
         try:
-            client = await self._get_client()
-            resp = await client.get(ts_url)
+            await session_mgr.ensure_login()
+            resp = await session_mgr.client.get(ts_url)
             if resp.status_code != 200 or len(resp.content) < 1000:
                 return None
 
-            # Write to temp file for OpenCV to decode
-            tmp_path = f"/tmp/sentinel_ts_{random.randint(10000,99999)}.ts"
-            # Use system temp on Windows too
-            if os.name == 'nt':
-                tmp_path = os.path.join(os.environ.get('TEMP', '.'), f"sentinel_ts_{random.randint(10000,99999)}.ts")
+            raw_bytes = resp.content
 
+            # AES-128 decryption if encrypted stream
+            key = await self._get_encryption_key()
+            if key and len(raw_bytes) % 16 == 0:
+                try:
+                    iv = b"\x00" * 16
+                    cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
+                    decryptor = cipher.decryptor()
+                    raw_bytes = decryptor.update(raw_bytes) + decryptor.finalize()
+                except Exception as de:
+                    logger.debug(f"AES decryption error on {ts_url}: {de}")
+
+            # Write decrypted TS to temp file for OpenCV decoding
+            tmp_path = os.path.join(tempfile.gettempdir(), f"sentinel_ts_{random.randint(10000, 99999)}.ts")
             with open(tmp_path, 'wb') as f:
-                f.write(resp.content)
+                f.write(raw_bytes)
 
             cap = cv2.VideoCapture(tmp_path)
             frame = None
             if cap.isOpened():
-                # Skip to middle of segment for a cleaner frame (less transition artifacts)
                 total = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
                 if total > 3:
-                    cap.set(cv2.CAP_PROP_POS_FRAMES, total // 2)
+                    # Seek to a frame inside the segment (e.g. frame 15)
+                    cap.set(cv2.CAP_PROP_POS_FRAMES, min(15, total // 2))
                 ok, frame = cap.read()
                 if not ok:
-                    # Retry from beginning
                     cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
                     ok, frame = cap.read()
-                    if not ok:
-                        frame = None
+                if ok and frame is not None and frame.shape[0] > 0:
+                    pass
+                else:
+                    frame = None
             cap.release()
 
             # Cleanup temp file
