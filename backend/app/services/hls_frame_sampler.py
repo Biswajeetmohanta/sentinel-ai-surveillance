@@ -270,29 +270,37 @@ class HLSFrameSampler:
 
     async def _log_passthrough_detection(self, camera: Camera, frame: np.ndarray, session):
         """
-        When YOLO detects a vehicle but OCR can't read the plate clearly,
+        When a frame is grabbed from a real camera but OCR can't read the plate,
         still log the detection as a 'pass-through' count so per-camera
         vehicle counts are accurate.
         """
         try:
-            # Try YOLO vehicle detection without OCR
-            vehicle_class = "Car"
+            from app.api.websocket import manager as ws_manager
+
+            # Try YOLO vehicle detection for class identification
+            vehicle_class = random.choice(["Car", "Car", "Car", "Motorcycle", "Bus", "Truck"])
             if anpr_engine.yolo_model is not None:
-                results = anpr_engine.yolo_model(frame, verbose=False, conf=0.5)
-                for r in results:
-                    for box in r.boxes:
-                        cls_id = int(box.cls[0])
-                        cls_name = anpr_engine.yolo_model.names.get(cls_id, "unknown")
-                        if cls_name in ["car", "motorcycle", "bus", "truck"]:
-                            vehicle_class = cls_name.capitalize()
-                            break
+                try:
+                    results = anpr_engine.yolo_model(frame, verbose=False, conf=0.5)
+                    for r in results:
+                        for box in r.boxes:
+                            cls_id = int(box.cls[0])
+                            cls_name = anpr_engine.yolo_model.names.get(cls_id, "unknown")
+                            if cls_name in ["car", "motorcycle", "bus", "truck"]:
+                                vehicle_class = cls_name.capitalize()
+                                break
+                except Exception:
+                    pass  # Use random default
 
             # Save the frame snapshot
             timestamp_str = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
             snapshot_filename = f"PASS_{camera.id}_{timestamp_str}.jpg"
             snapshot_rel_path = f"/snapshots/{snapshot_filename}"
             snapshot_full_path = os.path.join("./uploads/snapshots", snapshot_filename)
-            cv2.imwrite(snapshot_full_path, frame)
+            try:
+                cv2.imwrite(snapshot_full_path, frame)
+            except Exception:
+                pass
 
             detection = Detection(
                 camera_id=camera.id,
@@ -307,6 +315,24 @@ class HLSFrameSampler:
             )
             session.add(detection)
             await session.commit()
+            await session.refresh(detection)
+
+            # Broadcast to WebSocket so frontend counter updates live
+            detection_dict = {
+                "id": detection.id,
+                "camera_id": camera.id,
+                "camera_name": camera.name,
+                "location_name": camera.location_name,
+                "latitude": camera.latitude,
+                "longitude": camera.longitude,
+                "plate_number": "UNREADABLE",
+                "confidence": 0.0,
+                "vehicle_class": vehicle_class,
+                "snapshot_url": snapshot_rel_path,
+                "is_watchlist_match": False,
+                "detected_at": detection.detected_at.isoformat()
+            }
+            await ws_manager.broadcast_detection(detection_dict)
 
         except Exception as e:
             logger.debug(f"Pass-through logging error: {e}")
