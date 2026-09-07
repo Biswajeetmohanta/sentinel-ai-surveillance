@@ -271,8 +271,10 @@ class HLSFrameSampler:
                 elif consecutive_failures > 5:
                     await asyncio.sleep(15)
                 else:
-                    # Sample every 8-15 seconds per camera cycle
-                    await asyncio.sleep(random.randint(8, 15))
+                    # Cloud/Render adaptation: relax sampling on 0.1 vCPU cloud servers to keep web server fast
+                    is_cloud = os.getenv("RENDER") is not None or os.getenv("PORT") is not None
+                    cycle_delay = random.randint(30, 45) if is_cloud else random.randint(8, 15)
+                    await asyncio.sleep(cycle_delay)
 
             except Exception as e:
                 logger.error(f"HLS sampling loop error: {e}")
