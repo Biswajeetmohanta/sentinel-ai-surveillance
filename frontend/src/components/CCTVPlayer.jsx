@@ -22,7 +22,10 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
     if (!video) return;
 
     const camCode = camera?.camera_code || 'cam01';
-    const src = `${BACKEND_URL}/api/v1/hls/${camCode}/index.m3u8`;
+    const hlsBase = (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'))
+      ? 'http://localhost:8001'
+      : 'https://ruby-subternatural-roselee.ngrok-free.dev';
+    const src = `${hlsBase}/api/v1/hls/${camCode}/index.m3u8`;
 
     // Seek helper for live sync
     const liveSync = () => {
@@ -43,6 +46,9 @@ export default function CCTVPlayer({ camera, onClose, onFocusMap }) {
         manifestLoadingTimeOut: 30000,
         fragLoadingTimeOut: 30000,
         enableWorker: true,
+        xhrSetup: (xhr) => {
+          xhr.setRequestHeader('ngrok-skip-browser-warning', 'true');
+        },
       });
       hlsRef.current = hls;
       hls.attachMedia(video);
